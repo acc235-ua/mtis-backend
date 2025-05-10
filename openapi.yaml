@@ -32,11 +32,9 @@ tags:
     description: iniciarSesion
   - name: Incidente
     description: incidentes
-  - name: Partes
-    description: insurance
   - name: Evidencia
     description: evidence
-  - name: Reclamaciones
+  - name: Claims
     description: claims
 
 
@@ -67,6 +65,8 @@ paths:
 
   /auth/login:
     post:
+      tags:
+        - IniciarSesion
       summary: Iniciar sesión
       requestBody:
         required: true
@@ -96,8 +96,8 @@ paths:
 
   /incidents:
     post:
-      tag:
-        - name: Incidente
+      tags:
+        - Incidente
       summary: Registrar un nuevo incidente
       requestBody:
         required: true
@@ -141,8 +141,8 @@ paths:
 
   /insurance/claim:
     post:
-      tag:
-        - name: Incidente
+      tags:
+        - Incidente
       summary: Crear parte de seguro asociado a un incidente
       requestBody:
         required: true
@@ -176,6 +176,8 @@ paths:
 
   /insurance/policy/validate:
     post:
+      tags:
+        - Incidente
       summary: Validar si una póliza está en el sistema
       requestBody:
         required: true
@@ -210,6 +212,8 @@ paths:
 
   /evidence/upload:
     post:
+      tags:
+        - Evidencia
       summary: Adjuntar una evidencia
       requestBody:
         required: true
@@ -233,6 +237,8 @@ paths:
 
   /claims/{claim_id}/status:
     get:
+      tags:
+        - Claims
       summary: Consultar el estado de un parte de seguro
       parameters:
         - name: claim_id
