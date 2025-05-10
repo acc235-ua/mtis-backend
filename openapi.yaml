@@ -1,0 +1,783 @@
+openapi: 3.0.0
+info:
+  title: Incident Management API
+  version: 1.0.0
+  description: API para la gestión de incidentes, partes de seguros y evidencias.
+servers:
+  - url: https://api.incident-management.com/v1
+    description: Servidor de producción
+
+tags:
+  - name: Seguros
+    description: Operaciones relacionadas con los seguros
+  - name: Poliza
+    description: Gestión de pólizas de seguro
+  - name: Incidencias
+    description: Gestión de incidencias
+  - name: Usuario
+    description: Validación y datos de usuarios
+  - name: Reclamaciones
+    description: Procesamiento de reclamaciones
+  - name: Indemnizacion
+    description: Consulta de indemnizaciones
+  - name: Fraude
+    description: Análisis de posibles fraudes
+  - name: Notificar
+    description: Notificaciones al usuario
+  - name: Comprobacion
+    description: Comprobaciones y verificaciones
+  - name: Registrar
+    description: hacer el registro
+  - name: IniciarSesion
+    description: iniciarSesion
+  - name: Incidente
+    description: incidentes
+  - name: Partes
+    description: insurance
+  - name: Evidencia
+    description: evidence
+  - name: Reclamaciones
+    description: claims
+
+
+paths:
+  /auth/register:
+    post:
+      tags:
+        - Registrar
+      summary: Registrar un nuevo usuario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '201':
+          description: Usuario registrado exitosamente
+        '400':
+          description: Datos de entrada inválidos
+
+  /auth/login:
+    post:
+      summary: Iniciar sesión
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Token de autenticación
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+        '401':
+          description: No autorizado
+        '403':
+          description: Credenciales inválidas
+
+  /incidents:
+    post:
+      tag:
+        - name: Incidente
+      summary: Registrar un nuevo incidente
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                incident_type:
+                  type: string
+                location:
+                  type: object
+                  properties:
+                    latitude:
+                      type: number
+                    longitude:
+                      type: number
+                description:
+                  type: string
+                reported_by:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    contact:
+                      type: string
+      responses:
+        '201':
+          description: Incidente registrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  incident_id:
+                    type: string
+        '400':
+          description: Datos de entrada inválidos
+        '401':
+          description: No autorizado
+
+  /insurance/claim:
+    post:
+      tag:
+        - name: Incidente
+      summary: Crear parte de seguro asociado a un incidente
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                incident_id:
+                  type: string
+                insured_name:
+                  type: string
+                policy_number:
+                  type: string
+                damage_description:
+                  type: string
+      responses:
+        '201':
+          description: Parte de seguro registrado exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  claim_id:
+                    type: string
+        '400':
+          description: Datos incompletos o inválidos
+        '401':
+          description: No autorizado
+
+  /insurance/policy/validate:
+    post:
+      summary: Validar si una póliza está en el sistema
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                policy_number:
+                  type: string
+      responses:
+        '200':
+          description: Póliza válida
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  valid:
+                    type: boolean
+                  policy_details:
+                    type: object
+                    properties:
+                      holder_name:
+                        type: string
+                      coverage:
+                        type: string
+        '404':
+          description: Póliza no encontrada
+        '401':
+          description: No autorizado
+
+  /evidence/upload:
+    post:
+      summary: Adjuntar una evidencia
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                claim_id:
+                  type: string
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: Evidencia adjuntada exitosamente
+        '400':
+          description: Archivo inválido o datos incompletos
+        '401':
+          description: No autorizado
+
+  /claims/{claim_id}/status:
+    get:
+      summary: Consultar el estado de un parte de seguro
+      parameters:
+        - name: claim_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Estado del parte de seguro
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  claim_id:
+                    type: string
+                  status:
+                    type: string
+                    enum: [en revision, solicitud de información adicional, rechazado, aprobado]
+        '404':
+          description: Parte de seguro no encontrado
+        '401':
+          description: No autorizado
+          
+
+  /seguro:
+    post:
+      tags:
+        - Seguros
+      summary: Crear un seguro
+      description: Crea un nuevo seguro a partir de datos
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Seguro"
+      responses:
+        "201":
+          description: Seguro creado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Seguro"
+        "400":
+          description: Datos inválidos
+
+  /seguro/{cliente}:
+    get:
+      tags:
+        - Seguros
+      summary: Consultar seguros de un cliente
+      description: Consulta todos los seguros de un cliente
+      parameters:
+        - name: cliente
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Seguro devuelto correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Seguro"
+        "400":
+          description: Datos inválidos
+          
+  /seguro/{cliente}/{id}:
+    get:
+      tags:
+        - Seguros
+      summary: Consultar seguro de un cliente
+      description: Consulta un único seguro de un cliente
+      parameters:
+        - name: cliente
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Seguros devueltos correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Seguro"
+        "400":
+          description: Datos inválidos
+    put:
+      tags:
+        - Seguros
+      summary: Actualizar un seguro de un cliente
+      description: Actualiza un seguro de un cliente
+      parameters:
+        - name: cliente
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Seguro"
+      responses:
+        "200":
+          description: Seguro actualizado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Seguro"
+        "400":
+          description: Datos inválidos
+        "404":
+          description: Seguro no encontrado
+
+  /seguroPrecio:
+    post:
+      tags:
+        - Seguros
+      summary: Calcular precio
+      description: Calcula el precio de un seguro segun sus datos
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Seguro"
+      responses:
+        "201":
+          description: Precio calculado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Seguro"
+        "400":
+          description: Datos inválidos
+  /poliza:
+    post:
+      tags:
+        - Poliza
+      summary: Crear poliza
+      description: Crear una nueva polzia
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Poliza"
+      responses:
+        "201":
+          description: Póliza creada correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Poliza"
+        "400":
+          description: Datos inválidos
+  /poliza/{cliente}/:
+    get:
+      tags:
+        - Poliza
+      summary: Consultar pólizas de un cliente
+      description: Consulta todas las pólizas de un cliente
+      parameters:
+        - name: cliente
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Póliza devuelta correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Poliza"
+        "400":
+          description: Datos inválidos
+    post:
+      tags:
+        - Poliza
+      summary: Enviar póliza al cliente
+      description: Envía la póliza al cliente
+      parameters:
+        - name: cliente
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Póliza enviada correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Poliza"
+        "400":
+          description: Datos inválidos
+          
+  /poliza/{cliente}/{id}:
+    get:
+      tags:
+        - Poliza
+      summary: Consultar póliza de un cliente
+      description: Consulta una única póliza de un cliente
+      parameters:
+        - name: cliente
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Pólizas devueltas correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Poliza"
+        "400":
+          description: Datos inválidos
+  
+  /fraud/{list_incidences}/{incidence_usr}:
+    get:
+      tags:
+        - Fraude
+      summary: Consultar posible fraude
+      description: Consultar posible fraude
+      parameters:
+        - name: list_incidences
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: incidence_usr
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Comprobacion exitosa
+        "400":
+          description: Datos inválidos
+  
+  /user/validate{user_nif}:
+    get:
+      tags:
+        - Usuario
+      summary: Validacion de usuario
+      description: Validacion de usuario
+      parameters:
+        - name: user_nif
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Validacion exitosa
+        "400":
+          description: Datos inválidos
+          
+  /incidence/type{file_inf}:
+    get:
+      tags:
+        - Incidencias
+      summary: Comprueba el tipo de dato
+      description: Comprueba el tipo de dato
+      parameters:
+        - name: file_inf
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Comprobacion exitosa
+        "400":
+          description: Datos inválidos
+          
+          
+  /incidence/contract{user_nif}/{type_incidence}:
+    get:
+      tags:
+        - Incidencias
+      summary: Constracta incidencias
+      description: Constracta incidencias
+      parameters:
+        - name: user_nif
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: type_incidence
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Coincidencia exitosa
+        "400":
+          description: Datos inválidos
+          
+  /incidence/recent{user_nif}:
+    post:
+      tags:
+        - Incidencias
+      summary: Devuelve las ultimas incidencias
+      description: Devuelve las ultimas incidencias
+      parameters:
+        - name: user_nif
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Lista enviada correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Lista_Inc"
+        "400":
+          description: Devolucion inválidos
+          
+  /reclamacion/{id_Reclamacion}/{cliente}/{id}:
+    get:
+      tags:
+        - Reclamaciones
+      description: Consulta si la poliza del cliente cubre la reclamación
+      parameters:
+        - name: id_Reclamacion
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: cliente
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Consulta realizada correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Reclamacion"
+        "400":
+          description: Datos inválidos
+          
+  /indemnizacion/{cliente}/{id}:
+    get:
+      tags:
+        - Indemnizacion
+      description: Consulta la cantidad a percibir por el usuario
+      parameters:
+        - name: cliente
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Consulta realizada correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Indemnizacion"
+        "400":
+          description: Datos inválidos
+          
+  /comprobar:
+    get:
+      tags:
+        - Comprobacion
+      description: Consulta si los datos proporcionados inicialmente por el usuario son correctos
+      parameters:
+        - name: cliente
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: seguro
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: poliza
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Consulta realizada correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Comprobacion"
+        "400":
+          description: Datos inválidos
+  
+  /notificar/{id_usuario}:
+    put:
+      tags:
+        - Notificar
+      description: Notifica al usuario la resolucion
+      parameters:
+        - name: id_usuario
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Notificado correctamente
+        "400":
+          description: Datos inválidos
+          
+components:
+  schemas:
+  
+    Reclamacion:
+      type: object
+      properties:
+        ok:
+          type: boolean
+          
+    Indemnizacion:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        suma:
+          type: number
+    
+    Comprobacion:
+      type: object
+      properties:
+        ok:
+          type: boolean
+  
+    Fraude:
+      type: object
+      properties:
+        list_incidences:
+          type: string
+          description: Lista de incidencias
+        incidence_usr:
+          type: string
+          description: Incidencia del usuario
+    
+    Usuario:
+      type: object
+      properties:
+          user_nif:
+            type: string
+            description: Nif de usuario
+            
+    Lista_Inc:
+      type: object
+      properties:
+          lista_Inc:
+            type: string
+            description: Lista de incidencias
+    
+    Incidencias:
+      type: object
+      properties:
+          user_nif:
+            type: string
+            description: Nif de usuario
+          file_inf:
+            type: string
+            description: Informe
+          type_incidence:
+            type: string
+            description: Tipo de incidencia
+        
+  
+    Seguro:
+      type: object
+      properties:
+        cliente:
+          type: string
+          description: El cliente que quiere el seguro
+        tipo:
+          type: string
+          description: Tipo de seguro que quiere
+        precio:
+          type: integer
+          description: Precio del seguro
+
+    Poliza:
+      type: object
+      properties:
+        nombre:
+          type: string
+          description: Nombre del cliente
+        direccion:
+          type: string
+          description: Dirección del cliente
+        fecha_inicio:
+          type: string
+          format: date
+          description: Fecha de inicio de la Póliza
+        fecha_fin:
+          type: string
+          format: date
+          description: Fecha de término de la Póliza
+        precio:
+          type: integer
+          description: Precio del seguro
+        deducible:
+          type: integer
+          description: Precio a pagar en caso de siniestro
