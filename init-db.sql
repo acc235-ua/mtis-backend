@@ -41,12 +41,15 @@ CREATE TABLE `Informe` (
   `ID` int NOT NULL AUTO_INCREMENT,
   `Perito_asociado` varchar(255) NOT NULL,
   `DNI_Usuario` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `ID_Incidencia` int NOT NULL,
   `Mensaje` varchar(1000) NOT NULL,
   PRIMARY KEY (`ID`),
   KEY `Perito_asociado` (`Perito_asociado`),
   KEY `DNI_Usuario` (`DNI_Usuario`),
+  KEY `ID_Incidencia` (`ID_Incidencia`),
   CONSTRAINT `Informe_ibfk_1` FOREIGN KEY (`Perito_asociado`) REFERENCES `Perito` (`Num_colegiado`),
-  CONSTRAINT `Informe_ibfk_2` FOREIGN KEY (`DNI_Usuario`) REFERENCES `Usuario` (`DNI`)
+  CONSTRAINT `Informe_ibfk_2` FOREIGN KEY (`DNI_Usuario`) REFERENCES `Usuario` (`DNI`),
+  CONSTRAINT `Informe_ibfk_3` FOREIGN KEY (`ID_Incidencia`) REFERENCES `Incidencia` (`ID`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
@@ -137,4 +140,4 @@ INSERT INTO `Usuario` (`ID`, `Nombre`, `Apellidos`, `DNI`, `Telefono`, `Correo`)
 (3,	'Jose María',	'Domínguez Ramos',	'42469628J',	'720677332',	'josemdominguez@gmail.com'),
 (4,	'Raquel',	'García López',	'87011952P',	'669966219',	'raquelgarcia@gmail.com');
 
--- 2025-05-11 08:51:59 UTC
+-- 2025-05-11 09:56:56 UTC
