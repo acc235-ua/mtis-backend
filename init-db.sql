@@ -14,11 +14,13 @@ DROP TABLE IF EXISTS `Fraude`;
 CREATE TABLE `Fraude` (
   `ID` int NOT NULL AUTO_INCREMENT,
   `DNI_Usuario` varchar(10) NOT NULL,
-  `Informe` varchar(1000) NOT NULL,
+  `ID_Informe` int NOT NULL,
   `Es_fraude` tinyint NOT NULL,
   PRIMARY KEY (`ID`),
   KEY `DNI_Usuario` (`DNI_Usuario`),
-  CONSTRAINT `Fraude_ibfk_1` FOREIGN KEY (`DNI_Usuario`) REFERENCES `Usuario` (`DNI`)
+  KEY `ID_Informe` (`ID_Informe`),
+  CONSTRAINT `Fraude_ibfk_1` FOREIGN KEY (`DNI_Usuario`) REFERENCES `Usuario` (`DNI`),
+  CONSTRAINT `Fraude_ibfk_2` FOREIGN KEY (`ID_Informe`) REFERENCES `Informe` (`ID`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
@@ -140,4 +142,4 @@ INSERT INTO `Usuario` (`ID`, `Nombre`, `Apellidos`, `DNI`, `Telefono`, `Correo`)
 (3,	'Jose María',	'Domínguez Ramos',	'42469628J',	'720677332',	'josemdominguez@gmail.com'),
 (4,	'Raquel',	'García López',	'87011952P',	'669966219',	'raquelgarcia@gmail.com');
 
--- 2025-05-11 09:56:56 UTC
+-- 2025-05-11 11:00:04 UTC
