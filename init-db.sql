@@ -131,7 +131,23 @@ INSERT INTO `Seguro_hogar` (`ID`, `ID_Seguro`, `Direccion`, `Condiciones`) VALUE
 (1,	2,	'Calle Madrid, 33, 4A',	'Buenas condiciones'),
 (2,	4,	'Calle Alicante, 10',	'Condiciones normales');
 
+DROP TABLE IF EXISTS `Parte`;
+CREATE TABLE `Parte` (
+  `ID` int NOT NULL AUTO_INCREMENT,
+  `Incidencia_ID` int NOT NULL,
+  `Poliza_ID` int NOT NULL,
+  `Descripcion` varchar(2000) NOT NULL,
+  PRIMARY KEY (`ID`),
+  KEY `Incidencia_ID` (`Incidencia_ID`),
+  KEY `Poliza_ID` (`Poliza_ID`),
+  CONSTRAINT `Parte_ibfk_1` FOREIGN KEY (`Incidencia_ID`) REFERENCES `Incidencia` (`ID`) ON DELETE CASCADE,
+  CONSTRAINT `Parte_ibfk_2` FOREIGN KEY (`Poliza_ID`) REFERENCES `Seguro` (`ID`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+INSERT INTO `Parte` (`ID`, `Incidencia_ID`, `Poliza_ID`, `Descripcion`) VALUES
+(1,	1,	1,	'Descripción de los daños del incidente'),
+(2,	1,	1,	'Descripción de los daños del incidente'),
+(3,	1,	1,	'Descripción de los daños del incidente');
 
 DROP TABLE IF EXISTS `Fraude`;
 CREATE TABLE `Fraude` (
