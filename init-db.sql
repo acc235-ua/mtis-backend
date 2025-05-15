@@ -7,22 +7,27 @@ SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
 
 SET NAMES utf8mb4;
 
-CREATE DATABASE `mtis` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `mtis`;
+CREATE DATABASE `mtis-grupal` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `mtis-grupal`;
 
-DROP TABLE IF EXISTS `Fraude`;
-CREATE TABLE `Fraude` (
+
+DROP TABLE IF EXISTS `Usuario`;
+CREATE TABLE `Usuario` (
   `ID` int NOT NULL AUTO_INCREMENT,
-  `DNI_Usuario` varchar(10) NOT NULL,
-  `ID_Informe` int NOT NULL,
-  `Es_fraude` tinyint NOT NULL,
+  `Nombre` varchar(30) NOT NULL,
+  `Apellidos` varchar(60) NOT NULL,
+  `DNI` varchar(10) NOT NULL,
+  `Telefono` varchar(13) NOT NULL,
+  `Correo` varchar(50) NOT NULL,
   PRIMARY KEY (`ID`),
-  KEY `DNI_Usuario` (`DNI_Usuario`),
-  KEY `ID_Informe` (`ID_Informe`),
-  CONSTRAINT `Fraude_ibfk_1` FOREIGN KEY (`DNI_Usuario`) REFERENCES `Usuario` (`DNI`),
-  CONSTRAINT `Fraude_ibfk_2` FOREIGN KEY (`ID_Informe`) REFERENCES `Informe` (`ID`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  UNIQUE KEY `DNI` (`DNI`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+INSERT INTO `Usuario` (`ID`, `Nombre`, `Apellidos`, `DNI`, `Telefono`, `Correo`) VALUES
+(1,	'Raúl',	'Fernández López',	'13232020M',	'722118305',	'raulfernandez@gmail.com'),
+(2,	'Paula',	'Giménez Jiménez',	'67970954C',	'608922065',	'paulagj@gmail.com'),
+(3,	'Jose María',	'Domínguez Ramos',	'42469628J',	'720677332',	'josemdominguez@gmail.com'),
+(4,	'Raquel',	'García López',	'87011952P',	'669966219',	'raquelgarcia@gmail.com');
 
 DROP TABLE IF EXISTS `Incidencia`;
 CREATE TABLE `Incidencia` (
@@ -38,21 +43,7 @@ CREATE TABLE `Incidencia` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
-DROP TABLE IF EXISTS `Informe`;
-CREATE TABLE `Informe` (
-  `ID` int NOT NULL AUTO_INCREMENT,
-  `Perito_asociado` varchar(255) NOT NULL,
-  `DNI_Usuario` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `ID_Incidencia` int NOT NULL,
-  `Mensaje` varchar(1000) NOT NULL,
-  PRIMARY KEY (`ID`),
-  KEY `Perito_asociado` (`Perito_asociado`),
-  KEY `DNI_Usuario` (`DNI_Usuario`),
-  KEY `ID_Incidencia` (`ID_Incidencia`),
-  CONSTRAINT `Informe_ibfk_1` FOREIGN KEY (`Perito_asociado`) REFERENCES `Perito` (`Num_colegiado`),
-  CONSTRAINT `Informe_ibfk_2` FOREIGN KEY (`DNI_Usuario`) REFERENCES `Usuario` (`DNI`),
-  CONSTRAINT `Informe_ibfk_3` FOREIGN KEY (`ID_Incidencia`) REFERENCES `Incidencia` (`ID`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 
 
 DROP TABLE IF EXISTS `Perito`;
@@ -72,6 +63,22 @@ INSERT INTO `Perito` (`ID`, `DNI`, `Nombre`, `Apellidos`, `Num_colegiado`) VALUE
 (2,	'15843495Z',	'Claudia',	'Pastor García',	'836401728395'),
 (3,	'87606879V',	'Patricia',	'Pérez Pérez',	'840326349619'),
 (4,	'96965360M',	'Eric',	'Valentín Callejo',	'283456201734');
+
+DROP TABLE IF EXISTS `Informe`;
+CREATE TABLE `Informe` (
+  `ID` int NOT NULL AUTO_INCREMENT,
+  `Perito_asociado` varchar(255) NOT NULL,
+  `DNI_Usuario` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `ID_Incidencia` int NOT NULL,
+  `Mensaje` varchar(1000) NOT NULL,
+  PRIMARY KEY (`ID`),
+  KEY `Perito_asociado` (`Perito_asociado`),
+  KEY `DNI_Usuario` (`DNI_Usuario`),
+  KEY `ID_Incidencia` (`ID_Incidencia`),
+  CONSTRAINT `Informe_ibfk_1` FOREIGN KEY (`Perito_asociado`) REFERENCES `Perito` (`Num_colegiado`),
+  CONSTRAINT `Informe_ibfk_2` FOREIGN KEY (`DNI_Usuario`) REFERENCES `Usuario` (`DNI`),
+  CONSTRAINT `Informe_ibfk_3` FOREIGN KEY (`ID_Incidencia`) REFERENCES `Incidencia` (`ID`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `Seguro`;
 CREATE TABLE `Seguro` (
@@ -124,22 +131,19 @@ INSERT INTO `Seguro_hogar` (`ID`, `ID_Seguro`, `Direccion`, `Condiciones`) VALUE
 (1,	2,	'Calle Madrid, 33, 4A',	'Buenas condiciones'),
 (2,	4,	'Calle Alicante, 10',	'Condiciones normales');
 
-DROP TABLE IF EXISTS `Usuario`;
-CREATE TABLE `Usuario` (
-  `ID` int NOT NULL AUTO_INCREMENT,
-  `Nombre` varchar(30) NOT NULL,
-  `Apellidos` varchar(60) NOT NULL,
-  `DNI` varchar(10) NOT NULL,
-  `Telefono` varchar(13) NOT NULL,
-  `Correo` varchar(50) NOT NULL,
-  PRIMARY KEY (`ID`),
-  UNIQUE KEY `DNI` (`DNI`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-INSERT INTO `Usuario` (`ID`, `Nombre`, `Apellidos`, `DNI`, `Telefono`, `Correo`) VALUES
-(1,	'Raúl',	'Fernández López',	'13232020M',	'722118305',	'raulfernandez@gmail.com'),
-(2,	'Paula',	'Giménez Jiménez',	'67970954C',	'608922065',	'paulagj@gmail.com'),
-(3,	'Jose María',	'Domínguez Ramos',	'42469628J',	'720677332',	'josemdominguez@gmail.com'),
-(4,	'Raquel',	'García López',	'87011952P',	'669966219',	'raquelgarcia@gmail.com');
+
+DROP TABLE IF EXISTS `Fraude`;
+CREATE TABLE `Fraude` (
+  `ID` int NOT NULL AUTO_INCREMENT,
+  `DNI_Usuario` varchar(10) NOT NULL,
+  `ID_Informe` int NOT NULL,
+  `Es_fraude` tinyint NOT NULL,
+  PRIMARY KEY (`ID`),
+  KEY `DNI_Usuario` (`DNI_Usuario`),
+  KEY `ID_Informe` (`ID_Informe`),
+  CONSTRAINT `Fraude_ibfk_1` FOREIGN KEY (`DNI_Usuario`) REFERENCES `Usuario` (`DNI`),
+  CONSTRAINT `Fraude_ibfk_2` FOREIGN KEY (`ID_Informe`) REFERENCES `Informe` (`ID`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- 2025-05-11 11:00:04 UTC
