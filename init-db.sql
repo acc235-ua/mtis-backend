@@ -44,6 +44,8 @@ CREATE TABLE `Incidencia` (
   CONSTRAINT `Incidencia_ibfk_1` FOREIGN KEY (`DNI_Usuario`) REFERENCES `Usuario` (`DNI`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+
+
 DROP TABLE IF EXISTS `Perito`;
 CREATE TABLE `Perito` (
   `ID` int NOT NULL AUTO_INCREMENT,
@@ -56,27 +58,61 @@ CREATE TABLE `Perito` (
   UNIQUE KEY `Num_colegiado` (`Num_colegiado`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-INSERT INTO `Perito` (`ID`, `DNI`, `Nombre`, `Apellidos`, `Num_colegiado`) VALUES
-(1,	'19252682A',	'Javier',	'López Maestre',	'839053016278'),
-(2,	'15843495Z',	'Claudia',	'Pastor García',	'836401728395'),
-(3,	'87606879V',	'Patricia',	'Pérez Pérez',	'840326349619'),
-(4,	'96965360M',	'Eric',	'Valentín Callejo',	'283456201734');
 
+-- IMPORTANTE: Al crear un perito, debe añadirse también a disponibilidadPeritos. Hay una petición SOAP en el WSDL de clientes que lo hace automático.
+-- INSERT INTO `Perito` (`ID`, `DNI`, `Nombre`, `Apellidos`, `Num_colegiado`) VALUES
+-- (1,	'19252682A',	'Javier',	'López Maestre',	'839053016278'),
+-- (2,	'15843495Z',	'Claudia',	'Pastor García',	'836401728395'),
+-- (3,	'87606879V',	'Patricia',	'Pérez Pérez',	'840326349619'),
+-- (4,	'96965360M',	'Eric',	'Valentín Callejo',	'283456201734');
+
+
+DROP TABLE IF EXISTS `casosPeritos`;
+
+CREATE TABLE `casosPeritos` (
+  `ID` int NOT NULL AUTO_INCREMENT,
+  `Fecha_Inicio` datetime NOT NULL,
+  `DNI_Perito` varchar(9) NOT NULL,
+  PRIMARY KEY (`ID`),
+  FOREIGN KEY (`DNI_Perito`) REFERENCES `Perito` (`DNI`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+DROP TABLE IF EXISTS `disponibilidadPeritos`;
+
+CREATE TABLE `disponibilidadPeritos` (
+  `DNI_Perito` varchar(9) NOT NULL,
+  `disponible` tinyint(1) NOT NULL,
+  PRIMARY KEY (`DNI_Perito`),
+  FOREIGN KEY (`DNI_Perito`) REFERENCES `Perito` (`DNI`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+DROP TABLE IF EXISTS `informesPeritos`;
+
+CREATE TABLE `informesPeritos` (
+  `ID` int NOT NULL AUTO_INCREMENT,
+  `Caso` int NOT NULL,
+  `Mensaje` varchar(1000),
+  PRIMARY KEY (`ID`),
+  FOREIGN KEY (`Caso`) REFERENCES `casosPeritos` (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+ 
+-- Nota: REVISAR ESTA TABLA, HE QUITADO LA RELACIÓN CON PERITOS
 DROP TABLE IF EXISTS `Informe`;
+
 CREATE TABLE `Informe` (
   `ID` int NOT NULL AUTO_INCREMENT,
-  `Perito_asociado` varchar(255) NOT NULL,
   `DNI_Usuario` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `ID_Incidencia` int NOT NULL,
   `Mensaje` varchar(1000) NOT NULL,
   PRIMARY KEY (`ID`),
-  KEY `Perito_asociado` (`Perito_asociado`),
   KEY `DNI_Usuario` (`DNI_Usuario`),
   KEY `ID_Incidencia` (`ID_Incidencia`),
-  CONSTRAINT `Informe_ibfk_1` FOREIGN KEY (`Perito_asociado`) REFERENCES `Perito` (`Num_colegiado`),
   CONSTRAINT `Informe_ibfk_2` FOREIGN KEY (`DNI_Usuario`) REFERENCES `Usuario` (`DNI`),
   CONSTRAINT `Informe_ibfk_3` FOREIGN KEY (`ID_Incidencia`) REFERENCES `Incidencia` (`ID`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 
 DROP TABLE IF EXISTS `Seguro`;
 CREATE TABLE `Seguro` (
