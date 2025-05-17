@@ -196,6 +196,50 @@ paths:
         "404":
           description: Parte de seguro no encontrado
       x-swagger-router-controller: Claims
+  /claims/{claim_id}:
+    put:
+      tags:
+      - Claims
+      summary: Actualizar el estado de un parte de seguro
+      operationId: claimsClaim_idStatusPUT
+      parameters:
+      - name: claim_id
+        in: path
+        description: ID del parte de seguro
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        description: Nuevo estado para el parte
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum:
+                  - en revision
+                  - solicitud de información adicional
+                  - rechazado
+                  - aprobado
+              required:
+                - status
+      responses:
+        "200":
+          description: Estado actualizado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/inline_response_200_2"
+        "404":
+          description: Parte no encontrado
+        "400":
+          description: Estado no válido
+      x-swagger-router-controller: Claims
   /seguro:
     post:
       tags:

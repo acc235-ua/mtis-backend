@@ -17,8 +17,8 @@ exports.incidentsPOST = function(body) {
       // Preparar la consulta SQL - FIXED COMMA AND TYPO
       const query = `
         INSERT INTO Incidencia 
-        (Titulo, Descripcion, DNI_Usuario, Fecha, Latitud, Longitud, Poliza_ID) 
-        VALUES (?, ?, ?, CURDATE(), ?, ?, ?)
+        (Titulo, Descripcion, DNI_Usuario, Fecha, Latitud, Longitud, Poliza_ID, Estado) 
+        VALUES (?, ?, ?, CURDATE(), ?, ?, ?, 'En revisión')
       `;
       
       const params = [
