@@ -37,14 +37,12 @@ CREATE TABLE `Incidencia` (
   `DNI_Usuario` varchar(10) NOT NULL,
   `Fecha` date NOT NULL,
   `Evidencias` varchar(1000) DEFAULT NULL,
+  `Latitud` DECIMAL(11, 8) NOT NULL,
+  `Longitud` DECIMAL(11, 8) NOT NULL,
   PRIMARY KEY (`ID`),
   KEY `DNI_Usuario` (`DNI_Usuario`),
   CONSTRAINT `Incidencia_ibfk_1` FOREIGN KEY (`DNI_Usuario`) REFERENCES `Usuario` (`DNI`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-
-
-
 
 DROP TABLE IF EXISTS `Perito`;
 CREATE TABLE `Perito` (
