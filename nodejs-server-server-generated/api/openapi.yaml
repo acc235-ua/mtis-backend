@@ -158,7 +158,7 @@ paths:
       operationId: evidenceUploadPOST
       requestBody:
         content:
-          multipart/form-data:
+          application/json:  # Changed from multipart/form-data to application/json
             schema:
               $ref: "#/components/schemas/evidence_upload_body"
         required: true
@@ -166,7 +166,7 @@ paths:
         "201":
           description: Evidencia adjuntada exitosamente
         "400":
-          description: Archivo inválido o datos incompletos
+          description: Datos inválidos o incompletos
         "401":
           description: No autorizado
       x-swagger-router-controller: Evidencia
@@ -833,14 +833,12 @@ components:
     incidents_reported_by:
       type: object
       properties:
-        name:
-          type: string
-        contact:
+        dni:
           type: string
     incidents_body:
       type: object
       properties:
-        incident_type:
+        title:
           type: string
         location:
           $ref: "#/components/schemas/incidents_location"
@@ -859,8 +857,6 @@ components:
       type: object
       properties:
         incident_id:
-          type: string
-        insured_name:
           type: string
         policy_number:
           type: string
@@ -892,16 +888,12 @@ components:
           holder_name: holder_name
     evidence_upload_body:
       type: object
-      required:
-        - claim_id
-        - evidence
       properties:
         claim_id:
           type: string
-          description: ID del parte de seguro asociado
         evidence:
           type: string
-          description: Contenido textual de la evidencia (URL, descripción o referencia)
+          description: Descripción textual de la evidencia
     inline_response_200_2:
       type: object
       properties:
