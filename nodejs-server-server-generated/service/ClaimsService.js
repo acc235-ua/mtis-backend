@@ -11,9 +11,9 @@ const db = require('../utils/db');
 exports.claimsClaim_idStatusGET = function(claim_id) {
   return new Promise(function(resolve, reject) {
     try {
-      // Preparar la consulta SQL
+      // Preparar la consulta SQL - this already includes all the fields you want
       const query = `
-        SELECT ID, Estado
+        SELECT ID, Titulo, Descripcion, Fecha, Evidencias, Latitud, Longitud, Estado
         FROM Incidencia
         WHERE ID = ?
       `;
@@ -33,9 +33,22 @@ exports.claimsClaim_idStatusGET = function(claim_id) {
           });
         }
         
-        // Devolver el ID y estado del parte
+        // Convert the date to a formatted string if needed
+        const fechaFormatted = results[0].Fecha ? 
+          new Date(results[0].Fecha).toISOString().split('T')[0] : 
+          null;
+        
+        // Return all fields from the database query
         resolve({
           claim_id: results[0].ID.toString(),
+          title: results[0].Titulo,
+          description: results[0].Descripcion,
+          date: fechaFormatted,
+          evidence: results[0].Evidencias,
+          location: {
+            latitude: results[0].Latitud,
+            longitude: results[0].Longitud
+          },
           status: results[0].Estado
         });
       });
