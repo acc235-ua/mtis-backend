@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="cliente" targetNamespace="http://www.example.org/cliente/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://www.example.org/cliente/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://www.example.org/cliente/">
+      <xsd:element name="ValidarCliente">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="dni" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ValidarClienteResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="out" type="xsd:boolean"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    
+      <xsd:complexType name="cliente">
+      	<xsd:sequence>
+      		<xsd:element name="nombre" type="xsd:string"/>
+      		<xsd:element name="apellidos" type="xsd:string"/>
+      		<xsd:element name="dni" type="xsd:string"/>
+
+      		<xsd:element name="telefono" type="xsd:int"/>
+      		<xsd:element name="correo" type="xsd:string"/>
+      	</xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="crearCliente">
+      	<xsd:complexType>
+      		<xsd:sequence>
+
+      			<xsd:element name="in" type="tns:cliente"/>
+      		</xsd:sequence>
+      	</xsd:complexType>
+      </xsd:element>
+      <xsd:element name="crearClienteResponse">
+      	<xsd:complexType>
+      		<xsd:sequence>
+
+      			<xsd:element name="out" type="xsd:boolean"/>
+      		</xsd:sequence>
+      	</xsd:complexType>
+      </xsd:element>
+
+
+      <xsd:element name="Request">
+      	<xsd:complexType>
+      		<xsd:sequence>
+
+      			<xsd:element name="in" type="xsd:string"/>
+      		</xsd:sequence>
+      	</xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Response">
+      	<xsd:complexType>
+      		<xsd:sequence>
+
+      			<xsd:element name="out" type="xsd:string"/>
+      		</xsd:sequence>
+      	</xsd:complexType>
+      </xsd:element>
+
+
+
+
+
+
+      <xsd:element name="MarcarComoFraude">
+      	<xsd:complexType>
+      		<xsd:sequence>
+
+      			<xsd:element name="dni" type="xsd:string"/>
+      		</xsd:sequence>
+      	</xsd:complexType>
+      </xsd:element>
+      <xsd:element name="MarcarComoFraudeResponse">
+      	<xsd:complexType>
+      		<xsd:sequence>
+
+      			<xsd:element name="respuesta" type="xsd:boolean"/>
+      		</xsd:sequence>
+      	</xsd:complexType>
+      </xsd:element>
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="Request">
+    <wsdl:part name="parameters" element="tns:Response">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="ValidarClienteResponse">
+    <wsdl:part name="parameters" element="tns:ValidarClienteResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="ValidarClienteRequest">
+    <wsdl:part name="parameters" element="tns:ValidarCliente">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="crearClienteRequest">
+    <wsdl:part name="parameters" element="tns:crearCliente">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="crearClienteResponse">
+    <wsdl:part name="parameters" element="tns:crearClienteResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="Response">
+    <wsdl:part name="parameters" element="tns:Response">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="MarcarComoFraudeRequest">
+    <wsdl:part name="parameters" element="tns:MarcarComoFraude">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="MarcarComoFraudeResponse">
+    <wsdl:part name="parameters" element="tns:MarcarComoFraudeResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="cliente">
+    <wsdl:operation name="ValidarCliente">
+      <wsdl:input message="tns:ValidarClienteRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:ValidarClienteResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="crearCliente">
+      <wsdl:input message="tns:crearClienteRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:crearClienteResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MarcarComoFraude">
+      <wsdl:input message="tns:MarcarComoFraudeRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:MarcarComoFraudeResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="clienteSOAP" type="tns:cliente">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="ValidarCliente">
+      <soap:operation soapAction="http://www.example.org/cliente/Validar Cliente"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="crearCliente">
+      <soap:operation soapAction="http://www.example.org/cliente/crearCliente"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MarcarComoFraude">
+      <soap:operation soapAction="http://www.example.org/cliente/MarcarComoFraude"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="cliente">
+    <wsdl:port name="clienteSOAP" binding="tns:clienteSOAP">
+      <soap:address location="http://www.example.org/"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

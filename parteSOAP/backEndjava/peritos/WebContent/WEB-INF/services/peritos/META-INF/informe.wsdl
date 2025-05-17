@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="informe" targetNamespace="http://www.example.org/informe/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://www.example.org/informe/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://www.example.org/informe/">
+      <xsd:element name="GenerarInforme">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="idCaso" type="xsd:int"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="GenerarInformeResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="informe" type="tns:Informe"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    
+      <xsd:complexType name="Informe">
+      	<xsd:sequence>
+			<xsd:element name="PeritoAsociado" type="tns:PeritosInforme"/>
+
+      		<xsd:element name="Mensaje" type="xsd:string"/>
+      	</xsd:sequence>
+      </xsd:complexType>
+    
+      <xsd:complexType name="PeritosInforme">
+      	<xsd:sequence>
+      		<xsd:element name="nombre" type="xsd:string"/>
+      		<xsd:element name="Apellidos" type="xsd:string"/>
+      		<xsd:element name="dni" type="xsd:string"/>
+      		<xsd:element name="numeroColegiado" type="xsd:int"/>
+      	</xsd:sequence>
+      </xsd:complexType>
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="GenerarInformeRequest">
+    <wsdl:part name="parameters" element="tns:GenerarInforme">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="GenerarInformeResponse">
+    <wsdl:part name="parameters" element="tns:GenerarInformeResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="informe">
+    <wsdl:operation name="GenerarInforme">
+      <wsdl:input message="tns:GenerarInformeRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:GenerarInformeResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="informeSOAP" type="tns:informe">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="GenerarInforme">
+      <soap:operation soapAction="http://www.example.org/informe/GenerarInforme"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="informe">
+    <wsdl:port name="informeSOAP" binding="tns:informeSOAP">
+      <soap:address location="http://www.example.org/"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

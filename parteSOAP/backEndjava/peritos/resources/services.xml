@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?><!-- This file was auto-generated from WSDL --><!-- by the Apache Axis2 version: 1.6.3  Built on : Jun 27, 2015 (11:17:49 BST) --><serviceGroup>
+    <service name="cliente">
+        <messageReceivers>
+            <messageReceiver mep="http://www.w3.org/ns/wsdl/in-out" class="org.example.www.cliente.ClienteMessageReceiverInOut"/>
+        </messageReceivers>
+        <parameter name="ServiceClass">org.example.www.cliente.ClienteSkeleton</parameter>
+        <parameter name="useOriginalwsdl">true</parameter>
+        <parameter name="modifyUserWSDLPortAddress">true</parameter>
+        <operation name="MarcarComoFraude" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://www.example.org/cliente/">
+            <actionMapping>http://www.example.org/cliente/MarcarComoFraude</actionMapping>
+            <outputActionMapping>http://www.example.org/cliente/cliente/MarcarComoFraudeResponse</outputActionMapping>
+        </operation>
+        <operation name="crearCliente" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://www.example.org/cliente/">
+            <actionMapping>http://www.example.org/cliente/crearCliente</actionMapping>
+            <outputActionMapping>http://www.example.org/cliente/cliente/crearClienteResponse</outputActionMapping>
+        </operation>
+        <operation name="ValidarCliente" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://www.example.org/cliente/">
+            <actionMapping>http://www.example.org/cliente/Validar Cliente</actionMapping>
+            <outputActionMapping>http://www.example.org/cliente/cliente/ValidarClienteResponse</outputActionMapping>
+        </operation>
+    </service>
+</serviceGroup>
