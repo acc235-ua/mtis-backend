@@ -135,6 +135,7 @@ CREATE TABLE `Parte` (
   `Incidencia_ID` int NOT NULL,
   `Poliza_ID` int NOT NULL,
   `Descripcion` varchar(2000) NOT NULL,
+  `Estado` varchar(20) NOT NULL DEFAULT 'Pendiente',
   PRIMARY KEY (`ID`),
   KEY `Incidencia_ID` (`Incidencia_ID`),
   KEY `Poliza_ID` (`Poliza_ID`),
