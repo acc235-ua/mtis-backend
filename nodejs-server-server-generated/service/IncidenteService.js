@@ -12,13 +12,13 @@ exports.incidentsPOST = function(body) {
   return new Promise(function(resolve, reject) {
     try {
       // Extraer datos del body
-      const { incident_type, location, description, reported_by } = body;
+      const { incident_type, location, description, reported_by, num_poliza } = body;
       
-      // Preparar la consulta SQL
+      // Preparar la consulta SQL - FIXED COMMA AND TYPO
       const query = `
         INSERT INTO Incidencia 
-        (Titulo, Descripcion, DNI_Usuario, Fecha, Latitud, Longitud) 
-        VALUES (?, ?, ?, CURDATE(), ?, ?)
+        (Titulo, Descripcion, DNI_Usuario, Fecha, Latitud, Longitud, Poliza_ID) 
+        VALUES (?, ?, ?, CURDATE(), ?, ?, ?)
       `;
       
       const params = [
@@ -26,7 +26,8 @@ exports.incidentsPOST = function(body) {
         description,                  // Descripcion
         reported_by.contact,          // DNI_Usuario
         location.latitude,            // Latitud
-        location.longitude            // Longitud
+        location.longitude,           // Longitud
+        num_poliza                    // Poliza_ID
       ];
       
       // Ejecutar la consulta usando la conexión existente
