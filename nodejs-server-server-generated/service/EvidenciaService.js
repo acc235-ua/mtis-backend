@@ -1,65 +1,62 @@
 'use strict';
 
+const db = require('../utils/db');
 
 /**
- * Adjuntar una evidencia
- *
- * no response value expected for this operation
- **/
+ * Upload evidence
+ * POST /v1/evidence/upload
+ */
 exports.evidenceUploadPOST = function(body) {
   return new Promise(function(resolve, reject) {
     try {
-      // Extraer datos del body
-      const { claim_id, evidence } = body;
+      console.log('Request body received:', body);
+      
+      // Extract data from JSON body
+      const incident_id = body.claim_id;  // Keeping parameter name compatible with frontend
+      const evidence = body.evidence;
+      
+      console.log('Processing evidence data:', { incident_id, evidence });
+      
+      // Validate required fields
+      if (!incident_id) {
+        return reject(new Error('No se proporcionó un ID de incidencia'));
+      }
       
       if (!evidence) {
         return reject(new Error('No se proporcionó una evidencia'));
       }
-      
-      // Primero obtenemos el ID de la incidencia asociada al parte
-      const getIncidenciaQuery = `
-        SELECT Incidencia_ID FROM Parte WHERE ID = ?
+
+      // Update evidence directly in Incidencia table
+      const updateQuery = `
+        UPDATE Incidencia 
+        SET Evidencias = CASE
+          WHEN Evidencias IS NULL OR Evidencias = '' THEN ?
+          ELSE CONCAT(Evidencias, ', ', ?)
+        END
+        WHERE ID = ?
       `;
       
-      db.query(getIncidenciaQuery, [claim_id], (incidenciaErr, incidenciaResults) => {
-        if (incidenciaErr) {
-          console.error('Error al obtener la incidencia:', incidenciaErr);
-          return reject(incidenciaErr);
+      db.query(updateQuery, [evidence, evidence, incident_id], (updateErr, updateResult) => {
+        if (updateErr) {
+          console.error('Error al actualizar evidencia:', updateErr);
+          return reject(updateErr);
         }
         
-        if (incidenciaResults.length === 0) {
-          return reject(new Error('No se encontró una incidencia asociada a este parte'));
+        // Check if any rows were actually updated
+        if (updateResult.affectedRows === 0) {
+          console.log('No se encontró incidencia con ID:', incident_id);
+          return reject(new Error('No se encontró una incidencia con el ID proporcionado'));
         }
         
-        const incidenciaId = incidenciaResults[0].Incidencia_ID;
-        
-        // Actualizar el campo Evidencias en la tabla Incidencia
-        // Si ya hay evidencias, añadimos la nueva separada por coma
-        const updateQuery = `
-          UPDATE Incidencia 
-          SET Evidencias = CASE
-            WHEN Evidencias IS NULL OR Evidencias = '' THEN ?
-            ELSE CONCAT(Evidencias, ',', ?)
-          END
-          WHERE ID = ?
-        `;
-        
-        db.query(updateQuery, [evidence, evidence, incidenciaId], (updateErr, updateResults) => {
-          if (updateErr) {
-            console.error('Error al actualizar la evidencia:', updateErr);
-            return reject(updateErr);
-          }
-          
-          resolve({
-            success: true,
-            message: 'Evidencia adjuntada correctamente'
-          });
+        resolve({
+          success: true,
+          message: 'Evidencia registrada correctamente',
+          incident_id: incident_id
         });
       });
     } catch (err) {
-      console.error('Error al procesar la evidencia:', err);
+      console.error('Error processing evidence:', err);
       reject(err);
     }
   });
-}
-
+};
