@@ -846,6 +846,8 @@ components:
           type: string
         reported_by:
           $ref: "#/components/schemas/incidents_reported_by"
+        num_poliza:
+          type: string
     inline_response_201:
       type: object
       properties:
