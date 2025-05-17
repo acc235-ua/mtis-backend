@@ -892,12 +892,16 @@ components:
           holder_name: holder_name
     evidence_upload_body:
       type: object
+      required:
+        - claim_id
+        - evidence
       properties:
         claim_id:
           type: string
-        file:
+          description: ID del parte de seguro asociado
+        evidence:
           type: string
-          format: binary
+          description: Contenido textual de la evidencia (URL, descripción o referencia)
     inline_response_200_2:
       type: object
       properties:
