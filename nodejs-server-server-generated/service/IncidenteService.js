@@ -81,8 +81,8 @@ exports.insuranceClaimPOST = function(body) {
         // Insertar en la tabla Parte
         const insertQuery = `
           INSERT INTO Parte 
-          (Incidencia_ID, Poliza_ID, Descripcion)
-          VALUES (?, ?, ?)
+          (Incidencia_ID, Poliza_ID, Descripcion, Estado)
+          VALUES (?, ?, ?, 'En revisión')
         `;
         
         const params = [
