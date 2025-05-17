@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .catch(error => {
                 incidentDetails.style.display = 'none';
-                showMessage(`Error al buscar la incidencia: ${error.message}`, 'error');
+                showMessage(`No se ha encontrado la incidencia`);
             });
     }
     
