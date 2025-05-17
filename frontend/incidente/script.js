@@ -16,18 +16,20 @@ document.getElementById('incidentForm').addEventListener('submit', function(e) {
     };
     
     // Enviar los datos a la API
-    fetch('http://localhost:8080/incidents', {
+    fetch('http://localhost:8080/v1/incidents', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
         },
         body: JSON.stringify(data)
     })
-    .then(response => {
+    .then(async response => {
+        const text = await response.text();
         if (!response.ok) {
-            throw new Error('Error en la respuesta: ' + response.status);
+            throw new Error(`Status: ${response.status}\nBody: ${text}`);
         }
-        return response.json();
+        return JSON.parse(text);
     })
     .then(result => {
         const resultDiv = document.getElementById('result');
