@@ -1,0 +1,27 @@
+services:
+  db:
+    image: mysql:latest
+    container_name: db
+    environment:
+      MYSQL_ROOT_PASSWORD: robinella7
+      MYSQL_DATABASE: mtis-grupal
+      MYSQL_USER: mtis
+      MYSQL_PASSWORD: robinella7
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    restart: unless-stopped
+
+  adminer:
+    image: adminer:latest
+    container_name: adminer
+    ports:
+      - "3308:8080"
+    depends_on:
+      - db
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
