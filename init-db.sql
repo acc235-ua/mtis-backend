@@ -106,7 +106,6 @@ CREATE TABLE `Incidencia` (
   CONSTRAINT `Incidencia_ibfk_3` FOREIGN KEY (`Tipo_Incidencia_ID`) REFERENCES `Tipo_Incidencia` (`ID`) ON DELETE CASCADE
 );
 
-
 DROP TABLE IF EXISTS `Informe`;
 CREATE TABLE `Informe` (
   `ID` int NOT NULL AUTO_INCREMENT,
@@ -121,20 +120,6 @@ CREATE TABLE `Informe` (
   CONSTRAINT `Informe_ibfk_1` FOREIGN KEY (`Perito_asociado`) REFERENCES `Perito` (`Num_colegiado`),
   CONSTRAINT `Informe_ibfk_2` FOREIGN KEY (`DNI_Usuario`) REFERENCES `Usuario` (`DNI`),
   CONSTRAINT `Informe_ibfk_3` FOREIGN KEY (`ID_Incidencia`) REFERENCES `Incidencia` (`ID`) ON DELETE CASCADE
-);
-
-
-DROP TABLE IF EXISTS `Fraude`;
-CREATE TABLE `Fraude` (
-  `ID` int NOT NULL AUTO_INCREMENT,
-  `DNI_Usuario` varchar(10) NOT NULL,
-  `ID_Informe` int NOT NULL,
-  `Es_fraude` tinyint NOT NULL,
-  PRIMARY KEY (`ID`),
-  KEY `DNI_Usuario` (`DNI_Usuario`),
-  KEY `ID_Informe` (`ID_Informe`),
-  CONSTRAINT `Fraude_ibfk_1` FOREIGN KEY (`DNI_Usuario`) REFERENCES `Usuario` (`DNI`),
-  CONSTRAINT `Fraude_ibfk_2` FOREIGN KEY (`ID_Informe`) REFERENCES `Informe` (`ID`) ON DELETE CASCADE
 );
 
 DROP TABLE IF EXISTS `Reclamaciones`;
@@ -205,14 +190,43 @@ DROP TABLE IF EXISTS `Fraude`;
 CREATE TABLE `Fraude` (
   `ID` int NOT NULL AUTO_INCREMENT,
   `DNI_Usuario` varchar(10) NOT NULL,
-  `ID_Informe` int NOT NULL,
+  `ID_Incidencia` int NOT NULL,
   `Es_fraude` tinyint NOT NULL,
   PRIMARY KEY (`ID`),
   KEY `DNI_Usuario` (`DNI_Usuario`),
-  KEY `ID_Informe` (`ID_Informe`),
+  KEY `ID_Incidencia` (`ID_Incidencia`),
   CONSTRAINT `Fraude_ibfk_1` FOREIGN KEY (`DNI_Usuario`) REFERENCES `Usuario` (`DNI`),
-  CONSTRAINT `Fraude_ibfk_2` FOREIGN KEY (`ID_Informe`) REFERENCES `Informe` (`ID`) ON DELETE CASCADE
+  CONSTRAINT `Fraude_ibfk_2` FOREIGN KEY (`ID_Incidencia`) REFERENCES `Incidencia` (`ID`) ON DELETE CASCADE
+);
+
+
+DROP TABLE IF EXISTS casosPeritos;
+CREATE TABLE casosPeritos (
+  ID int NOT NULL AUTO_INCREMENT,
+  Fecha_Inicio datetime NOT NULL,
+  DNI_Perito varchar(9) NOT NULL,
+  PRIMARY KEY (ID),
+  FOREIGN KEY (DNI_Perito) REFERENCES Perito (DNI)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+DROP TABLE IF EXISTS disponibilidadPeritos;
+CREATE TABLE disponibilidadPeritos (
+  DNI_Perito varchar(9) NOT NULL,
+  disponible tinyint(1) NOT NULL,
+  PRIMARY KEY (DNI_Perito),
+  FOREIGN KEY (DNI_Perito) REFERENCES Perito (DNI)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+DROP TABLE IF EXISTS informesPeritos;
+CREATE TABLE informesPeritos (
+  ID int NOT NULL AUTO_INCREMENT,
+  Caso int NOT NULL,
+  Mensaje varchar(1000),
+  PRIMARY KEY (ID),
+  FOREIGN KEY (Caso) REFERENCES casosPeritos (ID)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 
 -- 2025-05-11 11:00:04 UTC
 
