@@ -29,20 +29,72 @@ INSERT INTO `Usuario` (`ID`, `Nombre`, `Apellidos`, `DNI`, `Telefono`, `Correo`)
 (3,	'Jose María',	'Domínguez Ramos',	'42469628J',	'720677332',	'josemdominguez@gmail.com'),
 (4,	'Raquel',	'García López',	'87011952P',	'669966219',	'raquelgarcia@gmail.com');
 
-DROP TABLE IF EXISTS `Incidencia`;
-CREATE TABLE `Incidencia` (
-  `ID` int NOT NULL AUTO_INCREMENT,
-  `Titulo` varchar(255) NOT NULL,
-  `Descripcion` varchar(1000) NOT NULL,
-  `DNI_Usuario` varchar(10) NOT NULL,
-  `Fecha` date NOT NULL,
-  `Evidencias` varchar(1000) DEFAULT NULL,
-  `Latitud` DECIMAL(11, 8) NOT NULL,
-  `Longitud` DECIMAL(11, 8) NOT NULL,
-  PRIMARY KEY (`ID`),
-  KEY `DNI_Usuario` (`DNI_Usuario`),
-  CONSTRAINT `Incidencia_ibfk_1` FOREIGN KEY (`DNI_Usuario`) REFERENCES `Usuario` (`DNI`)
+DROP TABLE IF EXISTS Incidencia;
+CREATE TABLE Incidencia (
+  ID int NOT NULL AUTO_INCREMENT,
+  Titulo varchar(255) NOT NULL,
+  Descripcion varchar(1000) NOT NULL,
+  DNI_Usuario varchar(10) NOT NULL,
+  Fecha date NOT NULL,
+  Evidencias varchar(1000) DEFAULT NULL,
+  Latitud decimal(11,8) NOT NULL,
+  Longitud decimal(11,8) NOT NULL,
+  Poliza_ID int NOT NULL,
+  Tipo_Incidencia_ID int NOT NULL,
+  Estado varchar(255) NOT NULL DEFAULT 'En revisión',
+  PRIMARY KEY (ID),
+  KEY DNI_Usuario (DNI_Usuario),
+  KEY Incidencia_ibfk_2 (Poliza_ID),
+  CONSTRAINT Incidencia_ibfk_1 FOREIGN KEY (DNI_Usuario) REFERENCES Usuario (DNI),
+  CONSTRAINT Incidencia_ibfk_2 FOREIGN KEY (Poliza_ID) REFERENCES Seguro (ID) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+INSERT INTO Incidencia (ID, Titulo, Descripcion, DNI_Usuario, Fecha, Evidencias, Latitud, Longitud, Poliza_ID, Estado) VALUES
+(1,    'Registrado desde el frontend',    'Prueba de incidente desde el frontend',    '13232020M',    '2025-05-17',    'Evidencia adjuntada desde el frontend',    1.00000000,    2.00000000,    1,    'rechazado'),
+(2,    'Accidente de tráfico',    'Sa matao Paco',    '42469628J',    '2025-05-17',    'Al final Paco no sa matao. Parece que es mentira el accidente',    1.00000000,    1.00000000,    3,    'En revisión'),
+(3,    'Poliza inválida',    'Me muestra en el frontend correctamente que la póliza no es válida',    '87011952P',    '2025-05-17',    NULL,    2.00000000,    2.00000000,    2,    'En revisión'),
+(4,    'Accidente de coche',    'Era mujer',    '67970954C',    '2025-05-17',    NULL,    1.00000000,    420.00000000,    3,    'En revisión'),
+(5,    'Accidente de coche',    'descripcion',    '13232020M',    '2025-05-18',    NULL,    11.00000000,    11.00000000,    1,    'En revisión');
+
+
+DROP TABLE IF EXISTS Tipo_Seguro;
+CREATE TABLE Tipo_Seguro (
+  ID int NOT NULL AUTO_INCREMENT,
+  Nombre varchar(100) NOT NULL,
+  PRIMARY KEY (ID),
+  KEY Nombre (Nombre)
+);
+
+
+INSERT INTO Tipo_Seguro (ID, Nombre) VALUES
+(1, 'Todo riesgo'),
+(2, 'Terceros');
+NUEVO
+[17:48]
+DROP TABLE IF EXISTS Reclamaciones;
+CREATE TABLE Reclamaciones (
+  ID int NOT NULL AUTO_INCREMENT,
+  DNI_Usuario varchar(10) NOT NULL,
+  ID_Incidencia int NOT NULL,
+  PRIMARY KEY (ID),
+  KEY DNI_Usuario (DNI_Usuario),
+  KEY ID_Incidencia (ID_Incidencia),
+  CONSTRAINT Reclamaciones_ibfk_1 FOREIGN KEY (DNI_Usuario) REFERENCES Usuario (DNI),
+  CONSTRAINT Reclamaciones_ibfk_2 FOREIGN KEY (ID_Incidencia) REFERENCES Incidencia (ID) ON DELETE CASCADE
+);
+
+DROP TABLE IF EXISTS Tipo_Incidencia;
+CREATE TABLE Tipo_Incidencia (
+  ID int NOT NULL AUTO_INCREMENT,
+  Nombre varchar(255) NOT NULL,
+  Seguro_Cubre_ID int NOT NULL,
+  PRIMARY KEY (ID),
+  KEY Nombre (Nombre),
+  CONSTRAINT Tipo_Incidencia_ibfk_1 FOREIGN KEY (Seguro_Cubre_ID) REFERENCES Tipo_Seguro (ID) ON DELETE CASCADE
+);
+
+
+
 
 
 
@@ -196,4 +248,12 @@ CREATE TABLE `Fraude` (
   CONSTRAINT `Fraude_ibfk_2` FOREIGN KEY (`ID_Informe`) REFERENCES `Informe` (`ID`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- 2025-05-11 11:00:04 UTC
+ALTER TABLE fraude
+DROP FOREIGN KEY Fraude_ibfk_2;
+
+
+ALTER TABLE fraude
+ADD CONSTRAINT FK_Fraude_Incidencia
+FOREIGN KEY (ID_Informe) REFERENCES incidencia(ID)
+ON DELETE CASCADE
+ON UPDATE CASCADE;
