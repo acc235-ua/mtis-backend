@@ -77,7 +77,8 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Crear el objeto de datos para la API
         const data = {
-            incident_type: document.getElementById('incident_type').value,
+            title: document.getElementById('title').value,            // Añadido el campo title
+            incident_type: document.getElementById('incident_type').value,  // Mantenido como incident_type
             description: document.getElementById('description').value,
             location: {
                 latitude: parseFloat(document.getElementById('latitude').value),
@@ -90,8 +91,11 @@ document.addEventListener('DOMContentLoaded', function() {
             num_poliza: policyField.value
         };
         
+        console.log('Datos a enviar:', data); // Para depuración
+        
         // Check if all required fields are filled
         const requiredFields = [
+            { id: 'title', name: 'Título' },                        // Añadido a la validación
             { id: 'incident_type', name: 'Tipo de incidente' },
             { id: 'description', name: 'Descripción' },
             { id: 'latitude', name: 'Latitud' },
@@ -133,6 +137,16 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(result => {
             const resultDiv = document.getElementById('result');
+            
+            // Verificar si se recibió un ID de incidente válido
+            if (!result || !result.incident_id || result.incident_id === '') {
+                resultDiv.innerHTML = `<p>Error: No se pudo insertar el incidente en la base de datos</p>
+                                    <p>Por favor, verifique que todos los datos ingresados son correctos</p>`;
+                resultDiv.className = 'error';
+                return;
+            }
+            
+            // Si llegamos aquí, el incidente se creó exitosamente
             resultDiv.innerHTML = `<p>Incidente registrado con éxito!</p>
                                 <p>ID del incidente: ${result.incident_id}</p>`;
             resultDiv.className = 'success';
