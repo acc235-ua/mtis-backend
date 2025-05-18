@@ -565,7 +565,7 @@ paths:
         "400":
           description: Devolucion inválidos
       x-swagger-router-controller: Incidencias
-  /reclamacion/{id_Reclamacion}/{cliente}/{id}:
+  /reclamacion/{id_Reclamacion}/{cliente}:
     get:
       tags:
       - Reclamaciones
@@ -586,13 +586,6 @@ paths:
         explode: false
         schema:
           type: string
-      - name: id
-        in: path
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: integer
       responses:
         "200":
           description: Consulta realizada correctamente
@@ -603,7 +596,7 @@ paths:
         "400":
           description: Datos inválidos
       x-swagger-router-controller: Reclamaciones
-  /indemnizacion/{cliente}/{id}:
+  /indemnizacion/{cliente}:
     get:
       tags:
       - Indemnizacion
@@ -617,13 +610,6 @@ paths:
         explode: false
         schema:
           type: string
-      - name: id
-        in: path
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: integer
       responses:
         "200":
           description: Consulta realizada correctamente
@@ -655,14 +641,7 @@ paths:
         style: form
         explode: true
         schema:
-          type: integer
-      - name: poliza
-        in: query
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: integer
+          type: integer      
       responses:
         "200":
           description: Consulta realizada correctamente
