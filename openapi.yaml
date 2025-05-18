@@ -480,25 +480,21 @@ paths:
         "400":
           description: Datos inválidos
   
-  /fraud/{list_incidences}/{incidence_usr}:
+  /fraude/{dni_usuario}:
     get:
       tags:
-        - Fraude
+      - Fraude
       summary: Consultar posible fraude
       description: Consultar posible fraude
+      operationId: fraudCheckByDni
       parameters:
-        - name: list_incidences
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: incidence_usr
-          in: path
-          required: true
-          schema:
-            type: string
+      - name: dni_usuario
+        in: path
+        required: true
+        schema:
+          type: string
       responses:
-        '200':
+        "200":
           description: Comprobacion exitosa
         "400":
           description: Datos inválidos
@@ -716,12 +712,9 @@ components:
     Fraude:
       type: object
       properties:
-        list_incidences:
+        dni_usuario:
           type: string
-          description: Lista de incidencias
-        incidence_usr:
-          type: string
-          description: Incidencia del usuario
+          description: DNI del usuario para verificar fraude
     
     Usuario:
       type: object
