@@ -63,7 +63,7 @@ DROP TABLE IF EXISTS `Tipo_Incidencia`;
 CREATE TABLE `Tipo_Incidencia` (
   `ID` int NOT NULL AUTO_INCREMENT,
   `Nombre` varchar(255) NOT NULL,
-  `Seguro_Cubre_ID` int NOT NULL,
+  `Seguro_Cubre_Nombre` varchar(100) NOT NULL,
   PRIMARY KEY (`ID`),
   KEY `Nombre` (`Nombre`),
   CONSTRAINT `Tipo_Incidencia_ibfk_1` FOREIGN KEY (`Seguro_Cubre_ID`) REFERENCES `Tipo_Seguro` (`ID`) ON DELETE CASCADE

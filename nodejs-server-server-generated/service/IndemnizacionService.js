@@ -1,25 +1,46 @@
 'use strict';
 
-
+const db = require('../utils/db');
 /**
  * Consulta la cantidad a percibir por el usuario
  *
  * cliente String 
- * id Integer 
  * returns Indemnizacion
  **/
-exports.indemnizacionClienteIdGET = function(cliente,id) {
-  return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = {
-  "suma" : 0.8008281904610115,
-  "ok" : true
-};
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
-    } else {
-      resolve();
-    }
-  });
+exports.indemnizacionClienteIdGET = function(cliente) {
+  try
+  {
+    const queryIndem = `
+    SELECT PRECIO FROM SEGURO WHERE DNI_USUARIO = ?
+    `;
+
+    var dinero;
+
+    db.query(queryIndem, [cliente], (error, results) => {
+        if (error) {
+          console.error('Error al obtener la indemnizacion del usuario:', error);
+          return reject(error);
+        }
+          
+        if (results.length === 0) {
+          return reject({
+            status: 404,
+            message: 'El usuario no tiene seguro.'
+          });
+        }
+
+          dinero = results[0].Precio;
+
+        resolve({
+            ok: true,
+            suma: dinero,
+            status: 200
+        });
+      });
+  }
+  catch (err) {
+    console.error('Error en el procesamiento:', err);
+    reject(err);
+  }
 }
 

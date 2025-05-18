@@ -710,6 +710,13 @@ paths:
         explode: false
         schema:
           type: string
+      - name: aprobado
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: boolean
       responses:
         "200":
           description: Notificado correctamente
