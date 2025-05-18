@@ -40,8 +40,8 @@ export default class EvidenceUploadBody {
       obj = obj || new EvidenceUploadBody();
       if (data.hasOwnProperty('claim_id'))
         obj.claimId = ApiClient.convertToType(data['claim_id'], 'String');
-      if (data.hasOwnProperty('file'))
-        obj.file = ApiClient.convertToType(data['file'], 'Blob');
+      if (data.hasOwnProperty('evidence'))
+        obj.evidence = ApiClient.convertToType(data['evidence'], 'String');
     }
     return obj;
   }
@@ -53,7 +53,6 @@ export default class EvidenceUploadBody {
 EvidenceUploadBody.prototype.claimId = undefined;
 
 /**
- * @member {Blob} file
+ * @member {String} evidence
  */
-EvidenceUploadBody.prototype.file = undefined;
-
+EvidenceUploadBody.prototype.evidence = undefined;

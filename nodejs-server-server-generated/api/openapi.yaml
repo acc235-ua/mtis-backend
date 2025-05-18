@@ -158,7 +158,7 @@ paths:
       operationId: evidenceUploadPOST
       requestBody:
         content:
-          multipart/form-data:
+          application/json:  # Changed from multipart/form-data to application/json
             schema:
               $ref: "#/components/schemas/evidence_upload_body"
         required: true
@@ -166,7 +166,7 @@ paths:
         "201":
           description: Evidencia adjuntada exitosamente
         "400":
-          description: Archivo inválido o datos incompletos
+          description: Datos inválidos o incompletos
         "401":
           description: No autorizado
       x-swagger-router-controller: Evidencia
@@ -195,6 +195,50 @@ paths:
           description: No autorizado
         "404":
           description: Parte de seguro no encontrado
+      x-swagger-router-controller: Claims
+  /claims/{claim_id}:
+    put:
+      tags:
+      - Claims
+      summary: Actualizar el estado de un parte de seguro
+      operationId: claimsClaim_idStatusPUT
+      parameters:
+      - name: claim_id
+        in: path
+        description: ID del parte de seguro
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        description: Nuevo estado para el parte
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum:
+                  - en revision
+                  - solicitud de información adicional
+                  - rechazado
+                  - aprobado
+              required:
+                - status
+      responses:
+        "200":
+          description: Estado actualizado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/inline_response_200_2"
+        "404":
+          description: Parte no encontrado
+        "400":
+          description: Estado no válido
       x-swagger-router-controller: Claims
   /seguro:
     post:
@@ -565,7 +609,7 @@ paths:
         "400":
           description: Devolucion inválidos
       x-swagger-router-controller: Incidencias
-  /reclamacion/{id_Reclamacion}/{cliente}/{id}:
+  /reclamacion/{id_Reclamacion}/{cliente}:
     get:
       tags:
       - Reclamaciones
@@ -586,13 +630,6 @@ paths:
         explode: false
         schema:
           type: string
-      - name: id
-        in: path
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: integer
       responses:
         "200":
           description: Consulta realizada correctamente
@@ -603,7 +640,7 @@ paths:
         "400":
           description: Datos inválidos
       x-swagger-router-controller: Reclamaciones
-  /indemnizacion/{cliente}/{id}:
+  /indemnizacion/{cliente}:
     get:
       tags:
       - Indemnizacion
@@ -617,13 +654,6 @@ paths:
         explode: false
         schema:
           type: string
-      - name: id
-        in: path
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: integer
       responses:
         "200":
           description: Consulta realizada correctamente
@@ -655,14 +685,7 @@ paths:
         style: form
         explode: true
         schema:
-          type: integer
-      - name: poliza
-        in: query
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: integer
+          type: integer      
       responses:
         "200":
           description: Consulta realizada correctamente
@@ -833,14 +856,12 @@ components:
     incidents_reported_by:
       type: object
       properties:
-        name:
-          type: string
-        contact:
+        dni:
           type: string
     incidents_body:
       type: object
       properties:
-        incident_type:
+        title:
           type: string
         location:
           $ref: "#/components/schemas/incidents_location"
@@ -848,6 +869,8 @@ components:
           type: string
         reported_by:
           $ref: "#/components/schemas/incidents_reported_by"
+        num_poliza:
+          type: string
     inline_response_201:
       type: object
       properties:
@@ -859,8 +882,6 @@ components:
       type: object
       properties:
         incident_id:
-          type: string
-        insured_name:
           type: string
         policy_number:
           type: string
@@ -892,16 +913,12 @@ components:
           holder_name: holder_name
     evidence_upload_body:
       type: object
-      required:
-        - claim_id
-        - evidence
       properties:
         claim_id:
           type: string
-          description: ID del parte de seguro asociado
         evidence:
           type: string
-          description: Contenido textual de la evidencia (URL, descripción o referencia)
+          description: Descripción textual de la evidencia
     inline_response_200_2:
       type: object
       properties:
