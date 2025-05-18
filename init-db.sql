@@ -41,12 +41,6 @@ CREATE TABLE `Perito` (
   UNIQUE KEY `Num_colegiado` (`Num_colegiado`)
 );
 
-INSERT INTO `Perito` (`ID`, `DNI`, `Nombre`, `Apellidos`, `Num_colegiado`) VALUES
-(1,	'19252682A',	'Javier',	'López Maestre',	'839053016278'),
-(2,	'15843495Z',	'Claudia',	'Pastor García',	'836401728395'),
-(3,	'87606879V',	'Patricia',	'Pérez Pérez',	'840326349619'),
-(4,	'96965360M',	'Eric',	'Valentín Callejo',	'283456201734');
-
 DROP TABLE IF EXISTS `Tipo_Seguro`;
 CREATE TABLE `Tipo_Seguro` (
   `ID` int NOT NULL AUTO_INCREMENT,
@@ -188,8 +182,6 @@ INSERT INTO `Seguro_hogar` (`ID`, `ID_Seguro`, `Direccion`, `Condiciones`) VALUE
 (1,	2,	'Calle Madrid, 33, 4A',	'Buenas condiciones'),
 (2,	4,	'Calle Alicante, 10',	'Condiciones normales');
 
-
-/*
 DROP TABLE IF EXISTS `Parte`;
 CREATE TABLE `Parte` (
   `ID` int NOT NULL AUTO_INCREMENT,
@@ -208,7 +200,6 @@ INSERT INTO `Parte` (`ID`, `Incidencia_ID`, `Poliza_ID`, `Descripcion`) VALUES
 (1,	1,	1,	'Descripción de los daños del incidente'),
 (2,	1,	1,	'Descripción de los daños del incidente'),
 (3,	1,	1,	'Descripción de los daños del incidente');
-*/
 
 DROP TABLE IF EXISTS `Fraude`;
 CREATE TABLE `Fraude` (
