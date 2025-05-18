@@ -104,6 +104,7 @@ CREATE TABLE `Incidencia` (
   `Longitud` DECIMAL(11, 8) NOT NULL,
   `Tipo_Incidencia_ID` int NOT NULL,
   `Poliza_ID` int NOT NULL,
+  `Estado` varchar(255) NOT NULL,
   PRIMARY KEY (`ID`),
   KEY `DNI_Usuario` (`DNI_Usuario`),
   CONSTRAINT `Incidencia_ibfk_1` FOREIGN KEY (`DNI_Usuario`) REFERENCES `Usuario` (`DNI`),
