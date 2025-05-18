@@ -120,16 +120,13 @@ exports.seguroPOST = function (body) {
 
 function calcularPrecio(tipo, fechaInicio, fechaFin) {
   //Imprimir prueba
-  console.log("Entra a calcularPrecio");
+  //console.log("Entra a calcularPrecio");
   const startDate = new Date(fechaInicio);
   const endDate = new Date(fechaFin);
   const durationInDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
 
   let precioBase;
   switch (tipo.toLowerCase()) {
-    case 'vida':
-      precioBase = 2;
-      break;
     case 'auto':
       precioBase = 3;
       break;
