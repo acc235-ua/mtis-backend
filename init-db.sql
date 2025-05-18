@@ -208,3 +208,19 @@ INSERT INTO `Parte` (`ID`, `Incidencia_ID`, `Poliza_ID`, `Descripcion`) VALUES
 (2,	1,	1,	'Descripción de los daños del incidente'),
 (3,	1,	1,	'Descripción de los daños del incidente');
 */
+
+DROP TABLE IF EXISTS `Fraude`;
+CREATE TABLE `Fraude` (
+  `ID` int NOT NULL AUTO_INCREMENT,
+  `DNI_Usuario` varchar(10) NOT NULL,
+  `ID_Informe` int NOT NULL,
+  `Es_fraude` tinyint NOT NULL,
+  PRIMARY KEY (`ID`),
+  KEY `DNI_Usuario` (`DNI_Usuario`),
+  KEY `ID_Informe` (`ID_Informe`),
+  CONSTRAINT `Fraude_ibfk_1` FOREIGN KEY (`DNI_Usuario`) REFERENCES `Usuario` (`DNI`),
+  CONSTRAINT `Fraude_ibfk_2` FOREIGN KEY (`ID_Informe`) REFERENCES `Informe` (`ID`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- 2025-05-11 11:00:04 UTC
+
