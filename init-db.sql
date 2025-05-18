@@ -111,7 +111,7 @@ CREATE TABLE `Perito` (
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
--- IMPORTANTE: Al crear un perito, debe añadirse también a disponibilidadPeritos. Hay una petición SOAP en el WSDL de clientes que lo hace automático.
+-- IMPORTANTE: Al crear un perito, debe añadirse también a disponibilidadPeritos. Hay una petición SOAP en el WSDL de peritos que lo hace automático.
 -- INSERT INTO `Perito` (`ID`, `DNI`, `Nombre`, `Apellidos`, `Num_colegiado`) VALUES
 -- (1,	'19252682A',	'Javier',	'López Maestre',	'839053016278'),
 -- (2,	'15843495Z',	'Claudia',	'Pastor García',	'836401728395'),
