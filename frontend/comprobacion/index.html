@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Comprobación de Seguro</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <div class="container">
+    <h1>Comprobación de Seguro</h1>
+    <form id="comprobacion-form">
+      <label for="cliente">Cliente (DNI/NIE):</label>
+      <input type="text" id="cliente" name="cliente" required />
+
+      <label for="seguro">Seguro (ID):</label>
+      <input type="number" id="seguro" name="seguro" min="1" required />
+
+      <button type="submit">Comprobar</button>
+    </form>
+
+    <div id="resultado"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
