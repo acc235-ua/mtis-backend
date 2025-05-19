@@ -6,7 +6,7 @@ const mysql = require('mysql2');
 const connection = mysql.createConnection({
   host: 'localhost',       // o la IP del servidor MySQL
   user: 'root',
-  password: 'alejandro', //Cambiar contraseña
+  password: 'contrasenamysql2025', //Cambiar contraseña
   port: 3307,             // Puerto por defecto de MySQL
   database: 'mtis-grupal'
 });
