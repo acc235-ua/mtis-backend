@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Crear Seguro</title>
+</head>
+<body>
+  <h1>Crear Seguro</h1>
+  <form id="seguroForm">
+    <input name="DNI_Usuario" placeholder="DNI Usuario" required><br>
+    <input name="Tipo_Seguro" placeholder="(Todo riesgo, terceros, basico)" required><br>
+    <input name="Fecha_inicio" placeholder="Fecha de inicio (YYYY-MM-DD)" type="date" required><br>
+    <input name="Fecha_fin" placeholder="Fecha de fin (YYYY-MM-DD)" type="date" required><br>
+    <input name="Direccion" placeholder="Dirección" required><br>
+    <button type="submit">Crear Seguro</button>
+  </form>
+  <pre id="respuesta"></pre>
+  <script>
+  const form = document.getElementById('seguroForm');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(form));
+
+    // Convertir fechas de "yyyy-mm-dd" a "yyyy/mm/dd"
+    const fechaInicio = data.Fecha_inicio.replace(/-/g, '/');
+    const fechaFin = data.Fecha_fin.replace(/-/g, '/');
+
+    const res = await fetch('/crear-seguro-hogar', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        DNI_Usuario: data.DNI_Usuario,
+        Tipo_Seguro: data.Tipo_Seguro,
+        Tipo: 'hogar',
+        Fecha_inicio: fechaInicio,
+        Fecha_fin: fechaFin,
+        Marca: '---',
+        Modelo: '---',
+        Matricula: '---',
+        Direccion: data.Direccion
+      })
+    });
+
+    const respuesta = await res.text();
+    document.getElementById('respuesta').textContent = respuesta;
+  });
+</script>
+
+</body>
+</html>
