@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Crear Seguro</title>
+  <title>Crear Seguro de coche</title>
 </head>
 <body>
   <h1>Crear Seguro</h1>
@@ -11,7 +11,9 @@
     <input name="Tipo_Seguro" placeholder="(Todo riesgo, terceros, basico)" required><br>
     <input name="Fecha_inicio" placeholder="Fecha de inicio (YYYY-MM-DD)" type="date" required><br>
     <input name="Fecha_fin" placeholder="Fecha de fin (YYYY-MM-DD)" type="date" required><br>
-    <input name="Direccion" placeholder="Dirección" required><br>
+    <input name="Marca" placeholder="Marca" required><br>
+    <input name="Modelo" placeholder="Modelo" required><br>
+    <input name="Matricula" placeholder="Matrícula" required><br>
     <button type="submit">Crear Seguro</button>
   </form>
   <pre id="respuesta"></pre>
@@ -25,19 +27,19 @@
     const fechaInicio = data.Fecha_inicio.replace(/-/g, '/');
     const fechaFin = data.Fecha_fin.replace(/-/g, '/');
 
-    const res = await fetch('/crear-seguro-hogar', {
+    const res = await fetch('/crear-seguro-coche', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         DNI_Usuario: data.DNI_Usuario,
         Tipo_Seguro: data.Tipo_Seguro,
-        Tipo: 'hogar',
+        Tipo: 'auto',
         Fecha_inicio: fechaInicio,
         Fecha_fin: fechaFin,
-        Marca: '---',
-        Modelo: '---',
-        Matricula: '---',
-        Direccion: data.Direccion
+        Marca: data.Marca,
+        Modelo: data.Modelo,
+        Matricula: data.Matricula,
+        Direccion: '---'
       })
     });
 
