@@ -16,6 +16,14 @@ h1 {
     margin-bottom: 20px;
     gap: 10px;
 }
+#respuesta {
+  white-space: pre-wrap; /* Esto hace que se ajuste el texto largo */
+  word-wrap: break-word; /* Esto permite romper palabras largas si es necesario */
+  max-width: 600px;       /* Puedes limitar el ancho si lo deseas */
+  margin-top: 20px;
+  padding: 10px;
+
+}
 
 .cabecera {
    

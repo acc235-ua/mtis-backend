@@ -23,7 +23,7 @@
   </form>
   <pre id="respuesta"></pre>
 
-  <script>
+<script>
   const form = document.getElementById('peritoForm');
 
   form.addEventListener('submit', async (e) => {
@@ -32,18 +32,29 @@
     const idCaso = encodeURIComponent(data.caso);
     const resultado = encodeURIComponent(data.respuestaCaso);
 
-    const res = await fetch(`/responde-perito?idcaso=${idCaso}&resultado=${resultado}`, {
-
+    try {
+      const res = await fetch(`/responde-perito?idcaso=${idCaso}&resultado=${resultado}`, {
         method: 'POST'
-    });
+      });
 
-      const respuesta = await res.text();
-      document.getElementById('respuesta').textContent = respuesta;
+      const respuesta = await res.json();
+      if(respuesta.nombrePerito != null){
+        const mensaje = `📄 Informe final:
+        Perito responsable: ${respuesta.nombrePerito}
+        Mensaje: ${respuesta.mensajeInforme}`;
+        document.getElementById('respuesta').textContent = mensaje;
+      }else{
+        
+        const mensaje = `📄 Informe final: ${respuesta.respuesta}`;
+        document.getElementById('respuesta').textContent = mensaje;
+      }
+     
 
-
-   
-
+    } catch (err) {
+      document.getElementById('respuesta').textContent = 'El caso introducido no existe ';
+    }
   });
 </script>
+
 </body>
 </html>

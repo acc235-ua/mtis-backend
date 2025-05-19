@@ -109,15 +109,15 @@ CREATE TABLE `Incidencia` (
 DROP TABLE IF EXISTS `Informe`;
 CREATE TABLE `Informe` (
   `ID` int NOT NULL AUTO_INCREMENT,
-  `Perito_asociado` varchar(255) NOT NULL,
+
   `DNI_Usuario` varchar(10) NOT NULL,
   `ID_Incidencia` int NOT NULL,
   `Mensaje` varchar(1000) NOT NULL,
   PRIMARY KEY (`ID`),
-  KEY `Perito_asociado` (`Perito_asociado`),
+ 
   KEY `DNI_Usuario` (`DNI_Usuario`),
   KEY `ID_Incidencia` (`ID_Incidencia`),
-  CONSTRAINT `Informe_ibfk_1` FOREIGN KEY (`Perito_asociado`) REFERENCES `Perito` (`Num_colegiado`),
+  
   CONSTRAINT `Informe_ibfk_2` FOREIGN KEY (`DNI_Usuario`) REFERENCES `Usuario` (`DNI`),
   CONSTRAINT `Informe_ibfk_3` FOREIGN KEY (`ID_Incidencia`) REFERENCES `Incidencia` (`ID`) ON DELETE CASCADE
 );
