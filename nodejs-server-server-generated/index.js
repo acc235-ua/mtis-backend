@@ -5,7 +5,7 @@ var http = require('http');
 var cors = require('cors');
 var express = require('express');
 var oas3Tools = require('oas3-tools');
-var serverPort = 8080;
+var serverPort = 8060;
 
 // Create a new Express app first
 var app = express();

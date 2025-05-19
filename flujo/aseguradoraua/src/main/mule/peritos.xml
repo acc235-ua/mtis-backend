@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:sockets="http://www.mulesoft.org/schema/mule/sockets" xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:email="http://www.mulesoft.org/schema/mule/email" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:wsc="http://www.mulesoft.org/schema/mule/wsc" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/sockets http://www.mulesoft.org/schema/mule/sockets/current/mule-sockets.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="9e9f72cb-0122-45f9-b883-9ee080d7b61e" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	
+
+
+	<wsc:config name="Web_Service_Consumer_Config1" doc:name="Web Service Consumer Config" doc:id="0fbe3812-f818-458b-9db3-832b64756c7b" >
+		<wsc:connection wsdlLocation="http://127.0.0.1:8080/peritos/services/peritos?wsdl" service="peritos" port="peritosSOAP" address="http://127.0.0.1:8080/peritos/services/peritos/" />
+	</wsc:config>
+	<email:smtp-config name="Email_SMTP" doc:name="Email SMTP" doc:id="86a46b7c-5d45-451d-99a0-4ce37b42fa24" >
+		<email:smtp-connection host="localhost" />
+	</email:smtp-config>
+	<wsc:config name="Web_Service_Consumer_Config" doc:name="Web Service Consumer Config" doc:id="9bbd832a-9f78-43f0-bb16-04405b0b959a" >
+		<wsc:connection wsdlLocation="http://127.0.0.1:8080/peritos/services/informe?wsdl" service="informe" port="informeSOAP" address="http://127.0.0.1:8080/peritos/services/informe/" />
+	</wsc:config>
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="5d9f1516-bce2-457c-b213-9a9593c5bfa8" >
+		<db:my-sql-connection host="localhost" port="3307" user="root" password="contrasenamysql2025" database="mtis-grupal" />
+	</db:config>
+	<file:config name="File_Config" doc:name="File Config" doc:id="6cbe0d60-3230-4466-b4cb-13dcedc74bae" />
+	<wsc:config name="Web_Service_Consumer_Config2" doc:name="Web Service Consumer Config" doc:id="08431cbe-2464-4f3d-bc4f-4c61dba26413" >
+		<wsc:connection wsdlLocation="http://127.0.0.1:8080/peritos/services/cliente?wsdl" service="cliente" port="clienteSOAP" address="http://127.0.0.1:8080/peritos/services/cliente/" />
+	</wsc:config>
+	<flow name="peritosFlow" doc:id="84f90ef3-2030-4834-9f03-c0461b8c7a27" >
+		
+		
+		
+
+		<http:listener doc:name="Listener" doc:id="a93d6750-0f9c-48c5-b707-2ffeb944d649" config-ref="HTTP_Listener_config" path="/solicitaperito"/>
+		
+		  
+
+		<ee:transform doc:name="Transform Message" doc:id="879d0f3d-4e54-4a81-96c0-75f80521e0b4" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="dniCliente" ><![CDATA[%dw 2.0
+output application/xml
+ns ns0 http://www.example.org/peritos/
+---
+{
+	ns0#ValidarCliente: { 
+		
+		dni : attributes.queryParams.dni
+	}
+}
+
+]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<wsc:consume doc:name="Consume" doc:id="38c8534e-a5ed-4185-b6ca-7662f16a97f1" config-ref="Web_Service_Consumer_Config2" operation="ValidarCliente" target="clienteValido">
+			<wsc:message >
+				<wsc:body ><![CDATA[#[vars.dniCliente]]]></wsc:body>
+			</wsc:message>
+		</wsc:consume>
+		<set-variable value="#[%dw 2.0&#10;ns ns0 http://www.example.org/cliente/&#10;---&#10;vars.clienteValido.body.ns0#ValidarClienteResponse.out]" doc:name="Set Variable" doc:id="8c9f366f-57ff-45f6-b351-a900723dc7b9" variableName="resultadoValidarCliente"/>
+		<choice doc:name="Choice" doc:id="a53dce9a-f143-4821-a72b-35d5b0f482b8" >
+			<when expression='#[vars.resultadoValidarCliente == "false"]'>
+				<ee:transform doc:name="Transform Message" doc:id="e5829c48-8292-4b59-b12a-4df041354a66" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	respuesta: "Este usuario,o bien no está registrado, o está en la lista de fraudes y no se le permite realizar esta acción"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<otherwise >
+				<wsc:consume doc:id="fcbfb04e-8850-4df3-893a-d713b21d67ec" config-ref="Web_Service_Consumer_Config1" operation="AsignaPerito" target="resultadoAsignacion" />
+				<set-variable value="#[%dw 2.0&#10;ns ns0 http://www.example.org/peritos/&#10;---&#10;vars.resultadoAsignacion.body.ns0#AsignaPeritoResponse.respuesta]" doc:name="Set Variable" doc:id="fea01a0b-20f9-4459-bce8-c741a2d9c23f" variableName="operacionCorrecta" />
+				<logger level="INFO" doc:name="Logger" doc:id="46ade38b-71c5-47c7-9f49-36c3878eae96" message="-------&gt;&gt;&gt;opco: #[vars.operacionCorrecta]" />
+				<db:select doc:name="Select" doc:id="ac37b630-0aba-46ca-83c9-c1de697a7385" target="coreoCliente" config-ref="Database_Config">
+							<db:sql><![CDATA[SELECT Correo FROM Usuario WHERE DNI = :dni LIMIT 1]]></db:sql>
+							<db:input-parameters><![CDATA[#[%dw 2.0
+ns ns0 http://www.example.org/peritos/
+---
+{
+	dni: vars.dniCliente.ns0#ValidarCliente.dni
+}]]]></db:input-parameters>
+						</db:select>
+				<logger level="INFO" doc:name="Logger" doc:id="bcc9a801-770f-48a6-bfc3-528cbdaf406c" message="-------&gt;&gt;&gt; correo: #[vars.coreoCliente.Correo] "/>
+				<choice doc:name="Choice" doc:id="95e088f2-f5e1-4957-ba2a-9abbbde74139">
+			<when expression='#[vars.operacionCorrecta == "true"]'>
+						<email:send doc:name="Send" doc:id="30ed6e13-ca5a-487a-af1c-fcf69c0ba6a2" config-ref="Email_SMTP" fromAddress="aseguradorasocialUA@gmail.com" subject="Solicitud de peritaje ha sido aprobada " toAddresses="#[vars.coreoCliente.Correo]">
+					<email:body>
+						<email:content><![CDATA[#["Solicitud aprobada, se acepta su caso"]]]></email:content>
+					</email:body>
+				</email:send>
+				<ee:transform doc:name="Transform Message" doc:id="8eb67939-2471-4154-bff2-9a9a4fd07e5a">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+ns ns0 http://www.example.org/peritos/
+
+output application/json
+---
+{
+	respuesta: "Se ha aceptado su caso,un perito lo llevará a cabo",
+	nombrePerito : vars.resultadoAsignacion.body.ns0#AsignaPeritoResponse.perito.nombre,
+	numeroCaso : vars.resultadoAsignacion.body.ns0#AsignaPeritoResponse.idCaso
+	
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<otherwise>
+				<email:send doc:name="Send" doc:id="cf354a07-d4e6-45f0-8860-b922d2a0de11" config-ref="Email_SMTP" toAddresses="#[vars.coreoCliente.Correo]" fromAddress="aseguradoraSocialUA@gmail.com" subject="Solicitud de peritaje rechazada"/>
+						<ee:transform doc:name="Transform Message" doc:id="8eb2db3b-6d3d-442d-a7d2-71dbc459a994">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	respuesta: "No hay peritos disponibles",
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</otherwise>
+		</choice>
+			</otherwise>
+		</choice>
+	</flow>
+	<flow name="peritosFlow1" doc:id="e1f985f4-0235-47e2-b181-17600e103a46" >
+		<http:listener doc:name="Listener" doc:id="85254e00-7b5f-4513-a539-1d8716bbbbe7" config-ref="HTTP_Listener_config" path="/respondePerito"/>
+		<set-variable value="#[attributes.queryParams.resultado]" doc:name="Set Variable" doc:id="18b7f22a-20eb-4ea4-830b-58ae8f2f57ca" variableName="respuesta"/>
+		<logger level="INFO" doc:name="Logger" doc:id="1a5072b8-874d-4528-ac51-65682d1247f6" message="respuesta ----&gt;&gt;&gt; #[vars.respuesta] y #[attributes.queryParams.resultado] y #[attributes.queryParams.idCaso]"/>
+		<db:select doc:id="24419770-78e6-4c48-a20f-8671f67c341c" target="comprobar" config-ref="Database_Config">
+			<db:sql ><![CDATA[SELECT * FROM informesPeritos WHERE Caso = :idCaso]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	idCaso :  attributes.queryParams.idCaso
+}]]]></db:input-parameters>
+		</db:select>
+		<choice doc:name="Choice" doc:id="e0755bae-5496-4a16-b5ce-f1c8f6d473d9" >
+			<when expression="#[!isEmpty(vars.comprobar[0])]">
+				<ee:transform doc:name="Transform Message" doc:id="b2a450ee-935e-4718-a812-8ed01f439ea7" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	respuesta: "Ya existe un informe sobre este caso"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<otherwise >
+				<choice doc:name="Choice" doc:id="6fbe1061-1768-4885-bb16-067a9630590e">
+			<when expression='#[vars.respuesta == "true"]'>
+				<logger level="INFO" doc:name="Logger" doc:id="f433c17f-69c4-48e5-b4ed-b6f7ab7b773a" message="PROCESO DE PAGO ACTIVADO" />
+			</when>
+					<otherwise>
+				<logger level="INFO" doc:name="Logger" doc:id="12a66a08-9bbc-40c0-9641-88da43b71524" message="NO HAY QUE PAGARLE NADA" />
+			</otherwise>
+		</choice>
+				<ee:transform doc:name="Transform Message" doc:id="8e053e6f-9462-4f41-adac-908b0131d45e">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/xml
+ns ns0 http://www.example.org/peritos/
+---
+{
+	ns0#GenerarInforme: { 
+		idCaso: attributes.queryParams.idCaso,
+		resultado : attributes.queryParams.resultado
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+				<wsc:consume doc:name="Consume" doc:id="0733377b-83a7-4968-8d7f-a035a4afdd35" config-ref="Web_Service_Consumer_Config" operation="GenerarInforme" />
+				<ee:transform doc:name="Transform Message" doc:id="a0761f0e-9ab0-4322-97a9-ef135a81d7cd">
+					<ee:message>
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="liberarPerito" ><![CDATA[%dw 2.0
+output application/xml
+
+ns ns0 http://www.example.org/informe/
+
+---
+{
+	ns0#LiberarPerito: { 
+		dni: payload.body.ns0#GenerarInformeResponse.informe.PeritoAsociado.dni
+		
+	}
+}]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+				<wsc:consume doc:name="Consume" doc:id="8ef65400-e3a6-4cee-8784-dc3fd1c531d2" config-ref="Web_Service_Consumer_Config1" target="outputLiberar" operation="LiberarPerito">
+					<wsc:message >
+						<wsc:body ><![CDATA[#[vars.liberarPerito]]]></wsc:body>
+					</wsc:message>
+				</wsc:consume>
+				<ee:transform doc:name="Transform Message" doc:id="74fafa27-9ba0-4196-893e-83285b639e66" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+ns ns0 http://www.example.org/informe/
+
+output application/json
+---
+{
+	nombrePerito:  payload.body.ns0#GenerarInformeResponse.informe.PeritoAsociado.nombre,
+	mensajeInforme: payload.body.ns0#GenerarInformeResponse.informe.Mensaje
+}]]></ee:set-payload>
+					</ee:message>
+					<ee:variables >
+					</ee:variables>
+				</ee:transform>
+				<file:write doc:name="Write" doc:id="3dde686a-44d0-4cc6-bcf5-dd1f4f207819" config-ref="File_Config" path="C:\MTIS\workspaceAnypointStudio\peritos\src\main\resources\ficheros\informe.txt">
+					<file:content ><![CDATA[#[payload.mensajeInforme]]]></file:content>
+				</file:write>
+			</otherwise>
+		</choice>
+	</flow>
+</mule>

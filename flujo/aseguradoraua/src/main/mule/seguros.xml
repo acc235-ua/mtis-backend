@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<http:listener-config name="HTTP_Listener_config-seguros" doc:name="HTTP Listener config" doc:id="c1a6be61-1f69-42a9-b27b-e204b867eb94" >
+		<http:listener-connection host="0.0.0.0" port="8082" />
+	</http:listener-config>
+	<db:config name="Database_Config-seguros" doc:name="Database Config" doc:id="c41d08a2-e518-4631-b667-a72d601e7349" >
+		<db:my-sql-connection host="localhost" port="3307" user="root" password="alejandro" database="mtis-grupal" />
+	</db:config>
+	<flow name="mtis-teoriaFlow" doc:id="2d2d3379-f34d-4f2a-8dcd-1cb2ed5463a9" >
+		<http:listener doc:name="Listener" doc:id="1cc06230-8a67-447d-bf21-0e6f931e5e81" config-ref="HTTP_Listener_config" path="/seguro"/>
+		<ee:transform doc:name="Transform Message" doc:id="bd818490-cd09-46fb-a11f-9283a69ea06b" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+  DNI_Usuario: payload.DNI_Usuario,
+  Tipo_Seguro: payload.Tipo_Seguro,
+  Tipo: payload.Tipo,
+  Fecha_inicio: payload.Fecha_inicio,
+  Fecha_fin: payload.Fecha_fin,
+  Marca: payload.Marca,
+  Modelo: payload.Modelo,
+  Matricula: payload.Matricula,
+  Direccion: payload.Direccion
+}
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<choice doc:name="Choice" doc:id="1e501fad-543f-4575-8e1c-1d800f4492a8" >
+			<when expression='#[payload.Tipo == "auto"]'>
+				<set-variable value="#[payload]" doc:name="Set Variable" doc:id="b8327c98-7ada-4a7c-af6d-734d01af1150" variableName="seguro_auto"/>
+				<http:request method="POST" doc:name="Request" doc:id="40717d01-0c0d-418a-b602-5fe301739abd" url="http://localhost:8060/v1/seguro/" >
+					<http:body ><![CDATA[#[vars.seguro_auto]]]></http:body>
+				</http:request>
+				<set-variable value="" doc:name="Set Variable" doc:id="302cf6cf-db7e-4744-9d81-3c14ee7b4731" variableName="id_seguro"/>
+				<db:select doc:name="Select" doc:id="54f54090-695e-4a58-9139-48ef878de91b" config-ref="Database_Config" target="id_seguro">
+					<db:sql ><![CDATA[SELECT ID FROM seguro WHERE DNI_Usuario = :dni AND Tipo = :tipo AND Fecha_fin = :fecha]]></db:sql>
+					<db:input-parameters ><![CDATA[#[{
+	'dni': vars.seguro_auto.DNI_Usuario,
+	'tipo': vars.seguro_auto.Tipo,
+	'fecha': vars.seguro_auto.Fecha_fin
+}]]]></db:input-parameters>
+				</db:select>
+				<db:insert doc:name="Insert" doc:id="2d5e8821-d843-4c13-8c53-302a65a07d5f" config-ref="Database_Config">
+					<db:sql ><![CDATA[INSERT INTO seguro_coche(ID_Seguro, Marca, Modelo, Matricula, Condiciones) VALUES (:id, :marca, :modelo, :matricula, :condiciones)]]></db:sql>
+					<db:input-parameters ><![CDATA[#[{
+	'id': (vars.id_seguro[0].ID as Number),
+	'marca': vars.seguro_auto.Marca,
+	'modelo': vars.seguro_auto.Modelo,
+	'matricula': vars.seguro_auto.Matricula,
+	'condiciones': "Condicion"
+}]]]></db:input-parameters>
+				</db:insert>
+				<set-payload value="Seguro de coche creado correctamente" doc:name="Set Payload" doc:id="dac13257-a61a-4fe3-9175-d0f33e252cde" />
+			</when>
+			<otherwise>
+				<choice doc:name="Choice" doc:id="f858e845-f4d1-4421-abb1-536561b30612" >
+					<when expression='#[payload.Tipo == "hogar"]'>
+						<set-variable value="#[payload]" doc:name="Set Variable" doc:id="652728d3-30a6-4b28-a50e-7dc2ba2e7906" variableName="seguro_hogar"/>
+						<http:request method="POST" doc:name="Request" doc:id="63eee361-3cf5-42cb-bc21-eab111874e1b" url="http://localhost:8060/v1/seguro/" >
+							<http:body ><![CDATA[#[vars.seguro_hogar]]]></http:body>
+						</http:request>
+						<set-variable value="" doc:name="Set Variable" doc:id="052aae85-a9b3-49ea-bca7-89910351a92f" variableName="id_seguro_hogar"/>
+						<db:select doc:name="Select" doc:id="630f111a-cbe0-4adc-9ca1-c78a1a03e38b" config-ref="Database_Config" target="id_seguro_hogar">
+							<db:sql ><![CDATA[SELECT ID FROM seguro WHERE DNI_Usuario = :dni AND Tipo = :tipo AND Fecha_fin = :fecha]]></db:sql>
+							<db:input-parameters ><![CDATA[#[{
+	'dni': vars.seguro_hogar.DNI_Usuario,
+	'tipo': vars.seguro_hogar.Tipo,
+	'fecha': vars.seguro_hogar.Fecha_fin,
+}]]]></db:input-parameters>
+						</db:select>
+						<logger level="INFO" doc:name="Logger" doc:id="f094f64e-9e85-47b2-b38a-f89dd9a5f0c1" message="--------&gt; #[vars.id_seguro_hogar]" />
+						<db:insert doc:name="Insert" doc:id="eff64ab6-1ebe-4bec-b631-3ca970e82799" config-ref="Database_Config">
+							<db:sql><![CDATA[INSERT INTO seguro_hogar(ID_Seguro, Direccion, Condiciones) VALUES (:id, :direccion, :condiciones)]]></db:sql>
+							<db:input-parameters><![CDATA[#[{
+	'id': (vars.id_seguro_hogar[0].ID as Number),
+	'direccion': vars.seguro_hogar.Direccion,
+	'condiciones': "Condicion"
+}]]]></db:input-parameters>
+						</db:insert>
+						<set-payload value="Seguro de hogar creado correctamente" doc:name="Set Payload" doc:id="37fb74cf-8095-41c6-886a-c9a4be78192e" />
+					</when>
+				</choice>
+			</otherwise>
+		</choice>
+	</flow>
+</mule>

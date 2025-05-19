@@ -83,21 +83,21 @@ exports.seguroClienteIdPUT = function(body,cliente,id) {
  **/
 exports.seguroPOST = function (body) {
   return new Promise(function (resolve, reject) {
-    const { DNI_Usuario, Tipo, Fecha_inicio, Fecha_fin } = body;
+    const { DNI_Usuario, Tipo_Seguro, Tipo, Fecha_inicio, Fecha_fin } = body;
 
     let Precio;
     try {
-      Precio = calcularPrecio(Tipo, Fecha_inicio, Fecha_fin);
+      Precio = calcularPrecio(Tipo_Seguro, Tipo, Fecha_inicio, Fecha_fin);
     } catch (err) {
       return reject({ error: err.message });
     }
 
     const query = `
-      INSERT INTO Seguro (DNI_Usuario, Tipo, Fecha_inicio, Fecha_fin, Precio)
-      VALUES (?, ?, ?, ?, ?)
+      INSERT INTO Seguro (DNI_Usuario, Tipo_Seguro, Tipo, Fecha_inicio, Fecha_fin, Precio)
+      VALUES (?, ?, ?, ?, ?, ?)
     `;
 
-    db.query(query, [DNI_Usuario, Tipo, Fecha_inicio, Fecha_fin, Precio], (error, result) => {
+    db.query(query, [DNI_Usuario, Tipo_Seguro ,Tipo, Fecha_inicio, Fecha_fin, Precio], (error, result) => {
       if (error) {
         console.error('Error al insertar seguro:', error);
         return reject({ error: 'Error al insertar seguro' });
@@ -106,6 +106,7 @@ exports.seguroPOST = function (body) {
       const insertedSeguro = {
         ID: result.insertId,
         DNI_Usuario,
+        Tipo_Seguro,
         Tipo,
         Fecha_inicio,
         Fecha_fin,
@@ -118,7 +119,7 @@ exports.seguroPOST = function (body) {
 };
 
 
-function calcularPrecio(tipo, fechaInicio, fechaFin) {
+function calcularPrecio(tipo_seguro, tipo, fechaInicio, fechaFin) {
   //Imprimir prueba
   //console.log("Entra a calcularPrecio");
   const startDate = new Date(fechaInicio);
@@ -134,10 +135,25 @@ function calcularPrecio(tipo, fechaInicio, fechaFin) {
       precioBase = 1.5;
       break;
     default:
-      throw new Error('Tipo de seguro no válido');
+      console.log("Tipo: " + tipo);
+      throw new Error('Tipo de seguro no válido1');
   }
 
-  return precioBase * durationInDays;
+  let bonus = 0;
+  switch (tipo_seguro.toLowerCase()) {
+    case 'basico':
+      bonus = 0;
+      break;
+    case 'todo riesgo':
+      bonus = 50;
+      break;
+    case 'terceros':
+      bonus = 100;
+      break;
+    default:
+      throw new Error('Tipo de seguro no válido2');
+  }
+  return (precioBase * durationInDays) + bonus;
 }
 
 

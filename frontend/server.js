@@ -25,6 +25,14 @@ app.listen(PORT, () => {
   console.log(`Servidor activo en http://localhost:${PORT}`);
 });
 
+app.post('/crear-seguro', async (req, res) => {
+  try {
+    const { data } = await axios.post('http://localhost:8081/seguro', req.body);
+    res.send(data); // Si tu backend devuelve JSON, puedes usar res.json(data)
+  } catch (err) {
+    res.status(500).send('Error al crear seguro: ' + err.message);
+  }
+});
 
 
 
