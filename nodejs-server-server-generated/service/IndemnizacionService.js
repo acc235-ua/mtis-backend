@@ -8,12 +8,13 @@ const db = require('../utils/db');
  * returns Indemnizacion
  **/
 exports.indemnizacionClienteIdGET = function(cliente) {
+  return new Promise((resolve, reject) => {  
   try
   {
     const queryIndem = `
     SELECT PRECIO FROM SEGURO WHERE DNI_USUARIO = ?
     `;
-
+//console.log(cliente);
     var dinero;
 
     db.query(queryIndem, [cliente], (error, results) => {
@@ -21,15 +22,16 @@ exports.indemnizacionClienteIdGET = function(cliente) {
           console.error('Error al obtener la indemnizacion del usuario:', error);
           return reject(error);
         }
-          
-        if (results.length === 0) {
+          //console.log(results.length);
+        if (results.length == 0) {
           return reject({
             status: 404,
             message: 'El usuario no tiene seguro.'
           });
         }
-
-          dinero = results[0].Precio;
+          //console.log(results);
+          dinero = results[0].PRECIO;
+          //console.log(dinero);
 
         resolve({
             ok: true,
@@ -42,5 +44,6 @@ exports.indemnizacionClienteIdGET = function(cliente) {
     console.error('Error en el procesamiento:', err);
     reject(err);
   }
+});
 }
 

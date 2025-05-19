@@ -57,7 +57,8 @@ CREATE TABLE `Tipo_Seguro` (
 
 INSERT INTO `Tipo_Seguro` (`ID`, `Nombre`) VALUES
 (1, 'Todo riesgo'),
-(2, 'Terceros');
+(2, 'Terceros'),
+(3, 'Basico');
 
 DROP TABLE IF EXISTS `Tipo_Incidencia`;
 CREATE TABLE `Tipo_Incidencia` (
@@ -66,9 +67,13 @@ CREATE TABLE `Tipo_Incidencia` (
   `Seguro_Cubre_Nombre` varchar(100) NOT NULL,
   PRIMARY KEY (`ID`),
   KEY `Nombre` (`Nombre`),
-  CONSTRAINT `Tipo_Incidencia_ibfk_1` FOREIGN KEY (`Seguro_Cubre_ID`) REFERENCES `Tipo_Seguro` (`ID`) ON DELETE CASCADE
+  CONSTRAINT `Tipo_Incidencia_ibfk_1` FOREIGN KEY (`Seguro_Cubre_Nombre`) REFERENCES `Tipo_Seguro` (`Nombre`) ON DELETE CASCADE
 );
 
+INSERT INTO `Tipo_Incidencia` (`ID`, `Nombre`, `Seguro_Cubre_Nombre`) VALUES
+(1, 'Asistencia Vial','Basico'),
+(2, 'Accidente', 'Terceros'),
+(3, 'Robo', 'Todo riesgo');
 
 DROP TABLE IF EXISTS `Seguro`;
 CREATE TABLE `Seguro` (
@@ -111,6 +116,10 @@ CREATE TABLE `Incidencia` (
   CONSTRAINT `Incidencia_ibfk_3` FOREIGN KEY (`Tipo_Incidencia_ID`) REFERENCES `Tipo_Incidencia` (`ID`) ON DELETE CASCADE
 );
 
+insert into `incidencia` (`ID` ,`Titulo`,	`Descripcion`, `DNI_Usuario`,`Fecha`, `Evidencias`,
+	`Latitud`,	`Longitud`,	`Tipo_Incidencia_ID`,`Poliza_ID`) VALUES
+(1 , 'Robo', 'Robo al aire libre', '67970954C' , '2025-04-13', 
+'AAAA', 0.8 , 0.9 , 1 , 1);
 
 DROP TABLE IF EXISTS `Informe`;
 CREATE TABLE `Informe` (
@@ -154,6 +163,8 @@ CREATE TABLE `Reclamaciones` (
   CONSTRAINT `Reclamaciones_ibfk_2` FOREIGN KEY (`ID_Incidencia`) REFERENCES `Incidencia` (`ID`) ON DELETE CASCADE
 );
 
+insert into `reclamaciones` (`ID`  , `DNI_Usuario` , `ID_Incidencia`) VALUES
+(1, '67970954C', 1);
 
 DROP TABLE IF EXISTS `Seguro_coche`;
 CREATE TABLE `Seguro_coche` (

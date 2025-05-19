@@ -4,22 +4,25 @@ const nodemailer = require('nodemailer');
 /**
  * Notifica al usuario la resolucion
  *
- * id_usuario String 
+ * dni_usuario String 
  * aprobado boolean
  * no response value expected for this operation
  **/
-exports.notificarId_usuarioPUT = function(id_usuario, aprobado) {
-    try {
+exports.notificarId_usuarioPUT = function(dni_usuario, aprobado) {
+  return new Promise((resolve, reject) => {  
+  try {
       // Obtenemos el correo del usuario pero lo vamos a enviar al servidor
       // FAKE SMTP con la direccion del correo y asi verificamos la select de paso
       const queryCli = `
-      SELECT Correo FROM SEGURO WHERE DNI_Usuario = ?
+      SELECT Correo FROM USUARIO WHERE DNI = ?
       `;
 
+      console.log(dni_usuario);
+      console.log(aprobado);
       var correo;
       var respuesta;
 
-      db.query(queryCli, [id_usuario], (error, results) => {
+      db.query(queryCli, [dni_usuario], (error, results) => {
         if (error) {
           console.error('Error al obtener el correo del usuario:', error);
           return reject(error);
@@ -28,18 +31,17 @@ exports.notificarId_usuarioPUT = function(id_usuario, aprobado) {
         if (results.length === 0) {
           return reject({
             status: 404,
-            message: 'El usuario no existe'
+            message: 'El usuario no existe: ' + dni_usuario
           });
         }
 
-          correo = results[0].correo;
-      });
-        
-      // Configura el transporte SMTP para FakeSMTP (localhost:2525)
-      const transporter = nodemailer.createTransport({
+          correo = results[0].Correo;
+          console.log(correo);
+
+          const transporter = nodemailer.createTransport({
         host: 'localhost',
         port: 2525,
-        secure: false, // FakeSMTP normalmente no usa TLS
+        secure: false, 
         tls: {
           rejectUnauthorized: false
         }
@@ -74,11 +76,13 @@ exports.notificarId_usuarioPUT = function(id_usuario, aprobado) {
           });
         }
       });
-
+      });
+        
     }
     catch (err) {
       console.error('Error en el procesamiento:', err);
       reject(err);
     }
+  });
 }
 

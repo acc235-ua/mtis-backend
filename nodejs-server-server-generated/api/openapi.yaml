@@ -4,7 +4,7 @@ info:
   description: "API para la gestión de incidentes, partes de seguros y evidencias."
   version: 1.0.0
 servers:
-- url: https://api.incident-management.com/v1
+- url: http://api.incident-management.com/v1
   description: Servidor de producción
 tags:
 - name: Seguros
@@ -640,7 +640,7 @@ paths:
         "400":
           description: Datos inválidos
       x-swagger-router-controller: Reclamaciones
-  /indemnizacion/{cliente}:
+  /indemnizacion:
     get:
       tags:
       - Indemnizacion
@@ -648,9 +648,9 @@ paths:
       operationId: indemnizacionClienteIdGET
       parameters:
       - name: cliente
-        in: path
+        in: query
         required: true
-        style: simple
+        style: form
         explode: false
         schema:
           type: string
@@ -696,25 +696,21 @@ paths:
         "400":
           description: Datos inválidos
       x-swagger-router-controller: Comprobacion
-  /notificar/{id_usuario}:
+  /notificar/:
     put:
       tags:
       - Notificar
       description: Notifica al usuario la resolucion
       operationId: notificarId_usuarioPUT
       parameters:
-      - name: id_usuario
-        in: path
+      - name: dni_usuario
+        in: query
         required: true
-        style: simple
-        explode: false
         schema:
           type: string
       - name: aprobado
-        in: path
+        in: query
         required: true
-        style: simple
-        explode: false
         schema:
           type: boolean
       responses:

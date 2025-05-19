@@ -3,8 +3,8 @@
 var utils = require('../utils/writer.js');
 var Reclamaciones = require('../service/ReclamacionesService');
 
-module.exports.reclamacionId_ReclamacionClienteIdGET = function reclamacionId_ReclamacionClienteIdGET (req, res, next, id_Reclamacion, cliente, id) {
-  Reclamaciones.reclamacionId_ReclamacionClienteIdGET(id_Reclamacion, cliente, id)
+module.exports.reclamacionId_ReclamacionClienteIdGET = function reclamacionId_ReclamacionClienteIdGET (req, res, next, id_Reclamacion, cliente) {
+  Reclamaciones.reclamacionId_ReclamacionClienteIdGET(id_Reclamacion, cliente)
     .then(function (response) {
       utils.writeJson(res, response);
     })
