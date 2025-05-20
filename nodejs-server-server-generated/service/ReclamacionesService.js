@@ -25,11 +25,15 @@ exports.reclamacionId_ReclamacionClienteIdGET = function(id_Reclamacion,cliente)
       `;
 
     const queryCli = `
-      SELECT Tipo_Seguro FROM SEGURO WHERE DNI_Usuario = ?
+      SELECT ts.ID
+      FROM SEGURO s
+      JOIN tipo_seguro ts ON s.Tipo_Seguro = ts.Nombre
+      WHERE s.DNI_Usuario = ?;
       `;
     
+      
     const queryInci = `
-      SELECT Seguro_Cubre_Nombre FROM Incidencia, Tipo_Incidencia 
+      SELECT Seguro_Cubre_ID FROM Incidencia, Tipo_Incidencia 
       WHERE Incidencia.ID = ? AND Incidencia.Tipo_Incidencia_ID = Tipo_Incidencia.ID`;
 
       db.query(queryRec, [id_Reclamacion], (error, results) => {
@@ -57,9 +61,9 @@ exports.reclamacionId_ReclamacionClienteIdGET = function(id_Reclamacion,cliente)
             message: 'El cliente introducido no coincide con el de la reclamación.'
           });
         }
-        //console.log(results);
+        console.log(results);
         idIncidencia =results[0].ID_Incidencia;
-        //console.log(idIncidencia);
+        console.log(idIncidencia);
 
         db.query(queryCli, [cliente], (error, results) => {
         if (error) {
@@ -76,10 +80,10 @@ exports.reclamacionId_ReclamacionClienteIdGET = function(id_Reclamacion,cliente)
             message: 'El usuario no tiene ningún seguro asociado'
           });
         }
-          //console.log(results);
-          tipoSeguro = results[0].Tipo_Seguro;
-          //console.log(tipoSeguro);
-          //console.log(idIncidencia);
+          console.log(results);
+          tipoSeguro = results[0].ID;
+          console.log(tipoSeguro);
+          console.log(idIncidencia);
 
           db.query(queryInci, [idIncidencia], (error, results) => {
           if (error) {
@@ -98,7 +102,7 @@ exports.reclamacionId_ReclamacionClienteIdGET = function(id_Reclamacion,cliente)
             });
           }
           //console.log(results);
-          if (tipoSeguro == results[0].Seguro_Cubre_Nombre)
+          if (tipoSeguro == results[0].Seguro_Cubre_ID)
           {
             return resolve({
               ok: true,
