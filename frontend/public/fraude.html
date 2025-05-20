@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Antifraude</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Detector antifraude</h1>
+    
+    <form id="fraudeForm">        
+        <div class="form-group">
+            <label for="contact">DNI:</label>
+            <input type="text" id="dni" name="dni" required>
+        </div>        
+        <button type="submit">Comprobación de posible fraude</button>
+    </form>
+    
+    <pre id="respuesta"></pre>
+
+    <script>
+  const form = document.getElementById('fraudeForm');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(form));
+    const dni = encodeURIComponent(data.dni);
+
+    try {
+      const res = await fetch(`/fraude?dni=${dni}`, {
+        method: 'GET'
+      });
+
+      const respuesta = await res.json();
+      const mensaje = ` 
+        DNI del usuario: ${respuesta.usuario}.
+        ¿Posible fraude?: ${respuesta.posibleFraude ? 'Sí' : 'NO'}.
+        ${respuesta.motivo ? `Motivo: ${respuesta.motivo}.` : ''}
+        ${respuesta.titulo ? `Título de la incidencia: ${respuesta.titulo}.` : ''}`;
+
+      document.getElementById('respuesta').textContent = mensaje;
+    } catch (err) {
+      document.getElementById('respuesta').textContent = 'Error al solicitar antifraude.';
+    }
+  });
+</script>
+</body>
+</html>
