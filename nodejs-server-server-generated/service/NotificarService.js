@@ -43,7 +43,7 @@ exports.notificarId_usuarioPUT = function(dni_usuario, aprobado) {
 
           const transporter = nodemailer.createTransport({
         host: 'localhost',
-        port: 2525,
+        port: 25,
         secure: false, 
         tls: {
           rejectUnauthorized: false
