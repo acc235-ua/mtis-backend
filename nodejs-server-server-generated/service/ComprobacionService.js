@@ -27,7 +27,10 @@ exports.comprobarGET = function(cliente,seguro) {
       db.query(queryCli, [cliente], (error, results) => {
         if (error) {
           console.error('Error al comprobar los datos de la reclamacion:', error);
-          return reject(error);
+          return reject({
+            status: 404,
+            message: 'Error al comprobar los datos de la reclamacion:' + error
+          });
         }
         
         if (results.length === 0) {
@@ -41,10 +44,12 @@ exports.comprobarGET = function(cliente,seguro) {
       db.query(querySeg, [seguro, cliente], (error, results) => {
          if (error) {
           console.error('Error al comprobar los datos de la reclamacion:', error);
-          return reject(error);
+          return reject({
+            status: 404,
+            message: 'Error al comprobar los datos de la reclamacion:' + error
+          });
         }
         //console.log(results.length);
-        
 
         if (results.length == 0) {
           return reject({
@@ -66,7 +71,10 @@ exports.comprobarGET = function(cliente,seguro) {
     catch(err)
     {
       console.error('Error:', err);
-      reject(err);
+      reject({
+            status: 404,
+            message: 'Error al comprobar los datos de la reclamacion:' + err
+          });
     }
   });
 }

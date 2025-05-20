@@ -20,7 +20,10 @@ exports.indemnizacionClienteIdGET = function(cliente) {
     db.query(queryIndem, [cliente], (error, results) => {
         if (error) {
           console.error('Error al obtener la indemnizacion del usuario:', error);
-          return reject(error);
+          return reject({
+            status: 404,
+            message: 'Error al obtener la indemnizacion del usuario:' + error
+          });
         }
           //console.log(results.length);
         if (results.length == 0) {
@@ -42,7 +45,10 @@ exports.indemnizacionClienteIdGET = function(cliente) {
   }
   catch (err) {
     console.error('Error en el procesamiento:', err);
-    reject(err);
+    reject({
+            status: 404,
+            message: 'Error al obtener la indemnizacion del usuario:' + err
+          });
   }
 });
 }
