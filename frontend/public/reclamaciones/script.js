@@ -1,10 +1,10 @@
-document.getElementById('comprobacion-form').addEventListener('submit', function (e) {
+document.getElementById('reclamacion-form').addEventListener('submit', function (e) {
   e.preventDefault();
-
+  const port = "8060";
+  const idReclamacion = document.getElementById('id_reclamacion').value;
   const cliente = document.getElementById('cliente').value;
-  const seguro = document.getElementById('seguro').value;
 
-  const url = `http://localhost:8080/v1/comprobar?cliente=${encodeURIComponent(cliente)}&seguro=${encodeURIComponent(seguro)}`;
+  const url = `http://localhost:${port}/v1/reclamacion/${encodeURIComponent(idReclamacion)}/${encodeURIComponent(cliente)}`;
 
   fetch(url)
     .then(response => {

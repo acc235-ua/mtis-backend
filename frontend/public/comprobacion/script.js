@@ -1,14 +1,12 @@
-document.getElementById('notificar-form').addEventListener('submit', function (e) {
+document.getElementById('comprobacion-form').addEventListener('submit', function (e) {
   e.preventDefault();
+  const port = "8060";
+  const cliente = document.getElementById('cliente').value;
+  const seguro = document.getElementById('seguro').value;
 
-  const dniUsuario = document.getElementById('dni_usuario').value;
-  const aprobado = document.getElementById('aprobado').checked;
+  const url = `http://localhost:${port}/v1/comprobar?cliente=${encodeURIComponent(cliente)}&seguro=${encodeURIComponent(seguro)}`;
 
-  const url = `http://localhost:8080/v1/notificar/?dni_usuario=${encodeURIComponent(dniUsuario)}&aprobado=${aprobado}`;
-
-  fetch(url, {
-    method: 'PUT'
-  })
+  fetch(url)
     .then(response => {
       if (!response.ok) {
         throw new Error('Error en la respuesta del servidor');
