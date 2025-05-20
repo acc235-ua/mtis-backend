@@ -35,7 +35,10 @@ exports.reclamacionId_ReclamacionClienteIdGET = function(id_Reclamacion,cliente)
       db.query(queryRec, [id_Reclamacion], (error, results) => {
         if (error) {
           console.error('Error al comprobar los datos de la reclamacion:', error);
-          return reject(error);
+          return reject({
+              status: 404,
+              message: 'Error al consultar la incidencia: ' + error
+            });
         }
           
         if (results.length === 0) {
@@ -61,7 +64,10 @@ exports.reclamacionId_ReclamacionClienteIdGET = function(id_Reclamacion,cliente)
         db.query(queryCli, [cliente], (error, results) => {
         if (error) {
           console.error('Error al comprobar los datos de la reclamacion:', error);
-          return reject(error);
+          return reject({
+              status: 404,
+              message: 'Error al consultar la incidencia: ' + error
+            });
         }
           
         if (results.length === 0) {
@@ -78,7 +84,10 @@ exports.reclamacionId_ReclamacionClienteIdGET = function(id_Reclamacion,cliente)
           db.query(queryInci, [idIncidencia], (error, results) => {
           if (error) {
             console.error('Error al comprobar los datos de la reclamacion:', error);
-            return reject(error);
+            return reject({
+              status: 404,
+              message: 'Error al consultar la incidencia: ' + error
+            });
           }
             //console.log(idIncidencia);
             //console.log(results);
@@ -109,7 +118,10 @@ exports.reclamacionId_ReclamacionClienteIdGET = function(id_Reclamacion,cliente)
  }
  catch (err) {
     console.error('Error en el procesamiento:', err);
-    reject(err);
+    reject({
+              status: 404,
+              message: 'Error en el procesamiento:' + err
+            });
   }
 });
 }

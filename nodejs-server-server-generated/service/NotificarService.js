@@ -25,7 +25,10 @@ exports.notificarId_usuarioPUT = function(dni_usuario, aprobado) {
       db.query(queryCli, [dni_usuario], (error, results) => {
         if (error) {
           console.error('Error al obtener el correo del usuario:', error);
-          return reject(error);
+          return reject({
+            status: 404,
+            message: 'Error al obtener el correo del usuario:' + error
+          });
         }
           
         if (results.length === 0) {
@@ -68,7 +71,12 @@ exports.notificarId_usuarioPUT = function(dni_usuario, aprobado) {
       transporter.sendMail(mailOptions, (err, info) => {
         if (err) {
           console.error('Error al enviar el correo:', err);
-          return reject(err);
+          return reject(
+            {
+            status: 404,
+            message: 'Error al obtener el correo del usuario:' + err
+          }
+          );
         } else {
           resolve({
             ok: true,
@@ -81,7 +89,10 @@ exports.notificarId_usuarioPUT = function(dni_usuario, aprobado) {
     }
     catch (err) {
       console.error('Error en el procesamiento:', err);
-      reject(err);
+      reject({
+            status: 404,
+            message: 'Error al obtener el correo del usuario:' + err
+          });
     }
   });
 }

@@ -1,12 +1,14 @@
-document.getElementById('reclamacion-form').addEventListener('submit', function (e) {
+document.getElementById('notificar-form').addEventListener('submit', function (e) {
   e.preventDefault();
+  const port = "8060";
+  const dniUsuario = document.getElementById('dni_usuario').value;
+  const aprobado = document.getElementById('aprobado').checked;
 
-  const idReclamacion = document.getElementById('id_reclamacion').value;
-  const cliente = document.getElementById('cliente').value;
+  const url = `http://localhost:${port}/v1/notificar/?dni_usuario=${encodeURIComponent(dniUsuario)}&aprobado=${aprobado}`;
 
-  const url = `http://localhost:8080/v1/reclamacion/${encodeURIComponent(idReclamacion)}/${encodeURIComponent(cliente)}`;
-
-  fetch(url)
+  fetch(url, {
+    method: 'PUT'
+  })
     .then(response => {
       if (!response.ok) {
         throw new Error('Error en la respuesta del servidor');

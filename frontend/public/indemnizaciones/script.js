@@ -1,18 +1,16 @@
-document.getElementById('reclamaciones-mule-form').addEventListener('submit', function (e) {
+document.getElementById('indemnizacion-form').addEventListener('submit', function (e) {
   e.preventDefault();
-
+  const port = "8060";
   const cliente = document.getElementById('cliente').value;
-  const seguroId = document.getElementById('seguroId').value;
-  const reclamacionId = document.getElementById('reclamacionId').value;
 
-  const url = `http://localhost:8081/reclamaciones?cliente=${encodeURIComponent(cliente)}&seguroId=${encodeURIComponent(seguroId)}&reclamacionId=${encodeURIComponent(reclamacionId)}`;
+  const url = `http://localhost:8060/v1/indemnizacion?cliente=${encodeURIComponent(cliente)}`;
 
   fetch(url)
     .then(response => {
       if (!response.ok) {
         throw new Error('Error en la respuesta del servidor');
       }
-      return response.json(); 
+      return response.json(); // o .text() si no es JSON
     })
     .then(data => {
       document.getElementById('resultado').textContent = `Respuesta: ${JSON.stringify(data)}`;
