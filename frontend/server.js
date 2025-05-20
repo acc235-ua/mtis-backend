@@ -43,7 +43,19 @@ app.post('/crear-seguro-coche', async (req, res) => {
   }
 });
 
-
+app.post('/crear-parte', async (req, res) => {
+  try {
+    const { data } = await axios.post('http://localhost:8080/incidencia', req.body);
+    res.json(data);
+  } catch (err) {
+    console.error('Error al crear parte:', err.response?.data || err.message);
+    res.status(err.response?.status || 500).json({
+      error: true,
+      message: 'Error al crear parte',
+      details: err.response?.data || err.message
+    });
+  }
+});
 
 app.post('/solicita-perito', async (req, res) => {
   try {
@@ -55,3 +67,13 @@ app.post('/solicita-perito', async (req, res) => {
   }
 });
 
+app.post('/responde-perito', async (req, res) => {
+  try {
+    const respuesta = req.query.resultado;
+    const caso = req.query.idcaso;       
+    const { data } = await axios.post(`http://localhost:8081/respondePerito?resultado=${respuesta}&idCaso=${caso}`);
+    res.send(data);
+  } catch (err) {
+    res.status(500).send('Error al enviar respuesta del perito: ' + err.message);
+  }
+});

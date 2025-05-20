@@ -15,20 +15,29 @@
   </form>
   <pre id="respuesta"></pre>
 
-  <script>
-    const form = document.getElementById('peritoForm');
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const data = Object.fromEntries(new FormData(form));
-      const dni = encodeURIComponent(data.dni); // Por si acaso
+<script>
+  const form = document.getElementById('peritoForm');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(form));
+    const dni = encodeURIComponent(data.dni);
 
+    try {
       const res = await fetch(`/solicita-perito?dni=${dni}`, {
         method: 'POST'
       });
 
-      const respuesta = await res.text();
-      document.getElementById('respuesta').textContent = respuesta;
-    });
-  </script>
+      const respuesta = await res.json();
+      const mensaje = ` ${respuesta.respuesta}.
+ Nombre del perito: ${respuesta.nombrePerito}.
+ Número de caso: ${respuesta.numeroCaso}.`;
+
+      document.getElementById('respuesta').textContent = mensaje;
+    } catch (err) {
+      document.getElementById('respuesta').textContent = 'Error al solicitar perito.';
+    }
+  });
+</script>
+
 </body>
 </html>
