@@ -81,7 +81,7 @@ app.post('/responde-perito', async (req, res) => {
 app.get('/fraude', async (req, res) => {
   try {
     const dni = req.query.dni;
-    const { data } = await axios.get(`http://localhost:8081/v1/fraude/${dni}`);
+    const { data } = await axios.get(`http://localhost:8081/fraude/${dni}`);
     res.send(data);
   } catch (err) {
     res.status(500).send('Error al solicitar antifraude: ' + err.message);

@@ -32,6 +32,7 @@
       });
 
       const respuesta = await res.json();
+      
       const mensaje = ` 
         DNI del usuario: ${respuesta.usuario}.
         ¿Posible fraude?: ${respuesta.posibleFraude ? 'Sí' : 'NO'}.
@@ -44,5 +45,16 @@
     }
   });
 </script>
+
+<style>
+  #respuesta {
+  white-space: pre-wrap;
+  font-family: monospace;
+  margin-top: 20px;
+  max-width: 80%;
+  text-align: left;
+  }
+</style>
+
 </body>
 </html>
