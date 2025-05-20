@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Antifraude</title>
+   <!--- <link rel="stylesheet" href="styles.css">-->
+</head>
+<body>
+    <h1>Detector antifraude</h1>
+    
+    <form id="fraudeForm">        
+        <div class="form-group">
+            <label for="contact">DNI:</label>
+            <input type="text" id="dni" name="dni" required>
+        </div>        
+        <button type="submit">Comprobación de posible fraude</button>
+    </form>
+    
+    <pre id="respuesta"></pre>
+
+    <script>
+  const form = document.getElementById('fraudeForm');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(form));
+    const dni = encodeURIComponent(data.dni);
+
+    try {
+      const res = await fetch(`/fraude?dni=${dni}`, {
+        method: 'GET'
+      });
+
+      const respuesta = await res.json();
+      
+      const mensaje = ` 
+        DNI del usuario: ${respuesta.usuario}.
+        ¿Posible fraude?: ${respuesta.posibleFraude ? 'Sí' : 'NO'}.
+        ${respuesta.motivo ? `Motivo: ${respuesta.motivo}.` : ''}
+        ${respuesta.titulo ? `Título de la incidencia: ${respuesta.titulo}.` : ''}`;
+
+      document.getElementById('respuesta').textContent = mensaje;
+    } catch (err) {
+      document.getElementById('respuesta').textContent = 'Error al solicitar antifraude.';
+    }
+  });
+</script>
+
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 30px;
+    background-color: #f9f9f9;
+    color: #333;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #444;
+  }
+
+  input, textarea {
+    width: 100%;
+    padding: 10px 12px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1em;
+    transition: border-color 0.2s;
+  }
+
+  input:focus, textarea:focus {
+    border-color: #4a90e2;
+    outline: none;
+  }
+
+  h1{
+    text-align: center;
+  }
+
+  button {
+    background-color: #1976d2;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1em;
+    transition: background-color 0.3s;
+  }
+
+  button:hover {
+    background-color: #1565c0;
+  }
+
+ pre {
+  margin-top: 25px;
+  padding: 15px;
+  border-radius: 8px;
+  font-size: 0.95em;
+  font-family: 'Inter', sans-serif;
+}
+
+  .success {
+    background-color: #e6f4ea;
+    border: 1px solid #a5d6a7;
+    color: #2e7d32;
+  }
+
+  .error {
+    background-color: #fdecea;
+    border: 1px solid #f5c6cb;
+    color: #c62828;
+  }
+
+  #policy-validation {
+    margin-top: 10px;
+    padding: 8px 12px;
+    font-size: 0.9em;
+    border-radius: 6px;
+    border: 1px solid transparent;
+  }
+
+  #policy-validation.info {
+    background-color: #e3f2fd;
+    border-color: #90caf9;
+    color: #0d47a1;
+  }
+
+  #policy-validation.success {
+    background-color: #e8f5e9;
+    border-color: #a5d6a7;
+    color: #2e7d32;
+  }
+
+  #policy-validation.warning {
+    background-color: #fff3e0;
+    border-color: #ffcc80;
+    color: #e65100;
+  }
+
+  #policy-validation.error {
+    background-color: #ffebee;
+    border-color: #ef9a9a;
+    color: #c62828;
+  }
+</style>
+
+
+</body>
+</html>
