@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Solicitar Perito</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <h1>Responder a un caso</h1>
+  <h3 class="cabecera" >Cuando un perito finalice su investigación, por favor introduzca aquí los datos: </h3>
+  <form id="peritoForm">
+    <input name="caso" id="caso" placeholder="id del caso" required><br>
+
+    <label for="respuesta">Resultado caso:</label>
+    <select name="respuestaCaso" id="respuestaCaso" required>
+    <option value="true">Favorable al cliente</option>
+    <option value="false">No favorable al cliente</option>
+
+  </select><br>
+
+    <button type="submit">responder petición</button>
+  </form>
+  <pre id="respuesta"></pre>
+
+<script>
+  const form = document.getElementById('peritoForm');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(form));
+    const idCaso = encodeURIComponent(data.caso);
+    const resultado = encodeURIComponent(data.respuestaCaso);
+
+    try {
+      const res = await fetch(`/responde-perito?idcaso=${idCaso}&resultado=${resultado}`, {
+        method: 'POST'
+      });
+
+      const respuesta = await res.json();
+      if(respuesta.nombrePerito != null){
+        const mensaje = `📄 Informe final:
+        Perito responsable: ${respuesta.nombrePerito}
+        Mensaje: ${respuesta.mensajeInforme}`;
+        document.getElementById('respuesta').textContent = mensaje;
+      }else{
+        
+        const mensaje = `📄 Informe final: ${respuesta.respuesta}`;
+        document.getElementById('respuesta').textContent = mensaje;
+      }
+     
+
+    } catch (err) {
+      document.getElementById('respuesta').textContent = 'El caso introducido no existe ';
+    }
+  });
+</script>
+
+</body>
+</html>

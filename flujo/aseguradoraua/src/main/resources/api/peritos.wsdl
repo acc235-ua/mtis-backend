@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://www.example.org/peritos/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="peritos" targetNamespace="http://www.example.org/peritos/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://www.example.org/peritos/">
+      <xsd:element name="AsignaPerito">
+        <xsd:complexType>
+          <xsd:sequence>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="AsignaPeritoResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+          	<xsd:element name="respuesta" type="xsd:boolean" />
+          	<xsd:element name="perito" type="tns:Perito"></xsd:element>
+          	<xsd:element name="idCaso" type="xsd:int"></xsd:element>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    
+    
+      <xsd:complexType name="Perito">
+      	<xsd:sequence>
+      		<xsd:element name="nombre" type="xsd:string"></xsd:element>
+      		<xsd:element name="apellidos" type="xsd:string"></xsd:element>
+      		<xsd:element name="dni" type="xsd:string"></xsd:element>
+      		<xsd:element name="numeroColegiado" type="xsd:int"></xsd:element>
+      	</xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="CrearPerito">
+      	<xsd:complexType>
+      		<xsd:sequence>
+
+      			<xsd:element name="in" type="tns:Perito"></xsd:element>
+      		</xsd:sequence>
+      	</xsd:complexType>
+      </xsd:element>
+      <xsd:element name="CrearPeritoResponse">
+      	<xsd:complexType>
+      		<xsd:sequence>
+
+      			<xsd:element name="out" type="xsd:boolean"></xsd:element>
+      		</xsd:sequence>
+      	</xsd:complexType>
+      </xsd:element>
+     
+      <xsd:element name="LiberarPerito">
+      	<xsd:complexType>
+      		<xsd:sequence>
+
+      			<xsd:element name="dni" type="xsd:string"></xsd:element>
+      		</xsd:sequence>
+      	</xsd:complexType>
+      </xsd:element>
+      <xsd:element name="LiberarPeritoResponse">
+      	<xsd:complexType>
+      		<xsd:sequence>
+
+      			<xsd:element name="out" type="xsd:boolean"></xsd:element>
+      		</xsd:sequence>
+      	</xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ObtenerPeritosLibres">
+      	<xsd:complexType>
+      		<xsd:sequence>
+
+      			<xsd:element name="in" type="xsd:string"></xsd:element>
+      		</xsd:sequence>
+      	</xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ObtenerPeritosLibresResponse">
+      	<xsd:complexType>
+      		<xsd:sequence>
+
+      			<xsd:element name="out" type="xsd:string"></xsd:element>
+      		</xsd:sequence>
+      	</xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ActualizarPerito">
+      	<xsd:complexType>
+      		<xsd:sequence>
+
+      			<xsd:element name="in" type="tns:Perito"></xsd:element>
+      		</xsd:sequence>
+      	</xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ActualizarPeritoResponse">
+      	<xsd:complexType>
+      		<xsd:sequence>
+
+      			<xsd:element name="out" type="xsd:boolean"></xsd:element>
+      		</xsd:sequence>
+      	</xsd:complexType>
+      </xsd:element>
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="AsignaPeritoRequest">
+    <wsdl:part element="tns:AsignaPerito" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="AsignaPeritoResponse">
+    <wsdl:part element="tns:AsignaPeritoResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="CrearPeritoRequest">
+  	<wsdl:part name="parameters" element="tns:CrearPerito"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="CrearPeritoResponse">
+  	<wsdl:part name="parameters" element="tns:CrearPeritoResponse"></wsdl:part>
+  </wsdl:message>
+  
+  <wsdl:message name="LiberarPeritoRequest">
+  	<wsdl:part name="parameters" element="tns:LiberarPerito"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="LiberarPeritoResponse">
+  	<wsdl:part name="parameters" element="tns:LiberarPeritoResponse"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="ObtenerPeritosLibresRequest">
+  	<wsdl:part name="parameters" element="tns:ObtenerPeritosLibres"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="ObtenerPeritosLibresResponse">
+  	<wsdl:part name="parameters" element="tns:ObtenerPeritosLibresResponse"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="ActualizarPeritoRequest">
+  	<wsdl:part name="parameters" element="tns:ActualizarPerito"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="ActualizarPeritoResponse">
+  	<wsdl:part name="parameters" element="tns:ActualizarPeritoResponse"></wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="peritos">
+    <wsdl:operation name="AsignaPerito">
+      <wsdl:input message="tns:AsignaPeritoRequest"/>
+      <wsdl:output message="tns:AsignaPeritoResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="CrearPerito">
+    	<wsdl:input message="tns:CrearPeritoRequest"></wsdl:input>
+    	<wsdl:output message="tns:CrearPeritoResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LiberarPerito">
+    	<wsdl:input message="tns:LiberarPeritoRequest"></wsdl:input>
+    	<wsdl:output message="tns:LiberarPeritoResponse"></wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="peritosSOAP" type="tns:peritos">
+  	<soap:binding style="document"
+  		transport="http://schemas.xmlsoap.org/soap/http" />
+  	<wsdl:operation name="AsignaPerito">
+  		<soap:operation
+  			soapAction="http://www.example.org/peritos/AsignaPerito" />
+  		<wsdl:input>
+  			<soap:body use="literal" />
+  		</wsdl:input>
+  		<wsdl:output>
+  			<soap:body use="literal" />
+  		</wsdl:output>
+  	</wsdl:operation>
+  	<wsdl:operation name="CrearPerito">
+  		<soap:operation
+  			soapAction="http://www.example.org/peritos/CrearPerito" />
+  		<wsdl:input>
+  			<soap:body use="literal" />
+  		</wsdl:input>
+  		<wsdl:output>
+  			<soap:body use="literal" />
+  		</wsdl:output>
+  	</wsdl:operation>
+  	<wsdl:operation name="LiberarPerito">
+  		<soap:operation
+  			soapAction="http://www.example.org/peritos/LiberarPerito" />
+  		<wsdl:input>
+  			<soap:body use="literal" />
+  		</wsdl:input>
+  		<wsdl:output>
+  			<soap:body use="literal" />
+  		</wsdl:output>
+  	</wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="peritos">
+    <wsdl:port binding="tns:peritosSOAP" name="peritosSOAP">
+      <soap:address location="http://www.example.org/"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

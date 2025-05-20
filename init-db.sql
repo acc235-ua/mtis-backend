@@ -28,7 +28,6 @@ INSERT INTO `Usuario` (`ID`, `Nombre`, `Apellidos`, `DNI`, `Telefono`, `Correo`)
 (3,	'Jose María',	'Domínguez Ramos',	'42469628J',	'720677332',	'josemdominguez@gmail.com'),
 (4,	'Raquel',	'García López',	'87011952P',	'669966219',	'raquelgarcia@gmail.com');
 
-
 DROP TABLE IF EXISTS `Perito`;
 CREATE TABLE `Perito` (
   `ID` int NOT NULL AUTO_INCREMENT,
@@ -41,24 +40,19 @@ CREATE TABLE `Perito` (
   UNIQUE KEY `Num_colegiado` (`Num_colegiado`)
 );
 
-INSERT INTO `Perito` (`ID`, `DNI`, `Nombre`, `Apellidos`, `Num_colegiado`) VALUES
-(1,	'19252682A',	'Javier',	'López Maestre',	'839053016278'),
-(2,	'15843495Z',	'Claudia',	'Pastor García',	'836401728395'),
-(3,	'87606879V',	'Patricia',	'Pérez Pérez',	'840326349619'),
-(4,	'96965360M',	'Eric',	'Valentín Callejo',	'283456201734');
-
 DROP TABLE IF EXISTS `Tipo_Seguro`;
 CREATE TABLE `Tipo_Seguro` (
   `ID` int NOT NULL AUTO_INCREMENT,
   `Nombre` varchar(100) NOT NULL,
   PRIMARY KEY (`ID`),
-  KEY `Nombre` (`Nombre`)
+  UNIQUE KEY `Nombre` (`Nombre`)
 );
 
 INSERT INTO `Tipo_Seguro` (`ID`, `Nombre`) VALUES
 (1, 'Todo riesgo'),
 (2, 'Terceros'),
 (3, 'Basico');
+
 
 DROP TABLE IF EXISTS `Tipo_Incidencia`;
 CREATE TABLE `Tipo_Incidencia` (
@@ -75,27 +69,40 @@ INSERT INTO `Tipo_Incidencia` (`ID`, `Nombre`, `Seguro_Cubre_Nombre`) VALUES
 (2, 'Accidente', 'Terceros'),
 (3, 'Robo', 'Todo riesgo');
 
+
 DROP TABLE IF EXISTS `Seguro`;
 CREATE TABLE `Seguro` (
   `ID` int NOT NULL AUTO_INCREMENT,
   `DNI_Usuario` varchar(10) NOT NULL,
   `Tipo_Seguro` varchar(100) NOT NULL,
+  `Tipo` varchar(1000) NOT NULL,
   `Fecha_inicio` date NOT NULL,
   `Fecha_fin` date NOT NULL,
   `Precio` double NOT NULL,
   PRIMARY KEY (`ID`),
   KEY `DNI_Usuario` (`DNI_Usuario`),
   KEY `Tipo_Seguro` (`Tipo_Seguro`),
-  CONSTRAINT `Seguro_ibfk_1` FOREIGN KEY (`DNI_Usuario`) REFERENCES `Usuario` (`DNI`),
-  CONSTRAINT `Seguro_ibfk_2` FOREIGN KEY (`Tipo_Seguro`) REFERENCES `Tipo_Seguro` (`Nombre`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `Seguro_ibfk_1` FOREIGN KEY (`DNI_Usuario`) REFERENCES `Usuario` (`DNI`) ON DELETE CASCADE,
+  CONSTRAINT `Seguro_ibfk_2` FOREIGN KEY (`Tipo_Seguro`) REFERENCES `Tipo_Seguro` (`Nombre`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+INSERT INTO `Seguro` (`DNI_Usuario`, `Tipo_Seguro`, `Tipo`, `Fecha_inicio`, `Fecha_fin`, `Precio`) VALUES
+('13232020M',	'Todo riesgo', 'Hogar', '2023-01-01',	'2026-01-01',	1200),
+('67970954C',	'Todo riesgo', 'Hogar',	'2025-04-01',	'2026-04-01',	300),
+('42469628J',	'Todo riesgo', 'Coche',	'2025-01-01',	'2026-01-01',	6000),
+('87011952P',	'Todo riesgo', 'Coche',	'2025-01-01',	'2030-01-01',	7000);
+
+
+
+DROP TABLE IF EXISTS `Tipo_Incidencia`;
+CREATE TABLE `Tipo_Incidencia` (
+  `ID` int NOT NULL AUTO_INCREMENT,
+  `Nombre` varchar(255) NOT NULL,
+  `Seguro_Cubre_ID` int NOT NULL,
+  PRIMARY KEY (`ID`),
+  KEY `Nombre` (`Nombre`),
+  CONSTRAINT `Tipo_Incidencia_ibfk_1` FOREIGN KEY (`Seguro_Cubre_ID`) REFERENCES `Tipo_Seguro` (`ID`) ON DELETE CASCADE
 );
-
-
-INSERT INTO `Seguro` (`ID`, `DNI_Usuario`, `Tipo_Seguro`, `Fecha_inicio`, `Fecha_fin`, `Precio`) VALUES
-(1,	'67970954C',	'Todo riesgo',	'2023-01-01',	'2026-01-01',	1200),
-(2,	'13232020M',	'Terceros',	'2025-04-01',	'2026-04-01',	300),
-(3,	'42469628J',	'Todo riesgo',	'2025-01-01',	'2026-01-01',	6000),
-(4,	'87011952P',	'Terceros',	'2025-01-01',	'2030-01-01',	7000);
 
 DROP TABLE IF EXISTS `Incidencia`;
 CREATE TABLE `Incidencia` (
@@ -109,6 +116,7 @@ CREATE TABLE `Incidencia` (
   `Longitud` DECIMAL(11, 8) NOT NULL,
   `Tipo_Incidencia_ID` int NOT NULL,
   `Poliza_ID` int NOT NULL,
+  `Estado` varchar(255) NOT NULL,
   PRIMARY KEY (`ID`),
   KEY `DNI_Usuario` (`DNI_Usuario`),
   CONSTRAINT `Incidencia_ibfk_1` FOREIGN KEY (`DNI_Usuario`) REFERENCES `Usuario` (`DNI`),
@@ -116,39 +124,27 @@ CREATE TABLE `Incidencia` (
   CONSTRAINT `Incidencia_ibfk_3` FOREIGN KEY (`Tipo_Incidencia_ID`) REFERENCES `Tipo_Incidencia` (`ID`) ON DELETE CASCADE
 );
 
+
 insert into `incidencia` (`ID` ,`Titulo`,	`Descripcion`, `DNI_Usuario`,`Fecha`, `Evidencias`,
 	`Latitud`,	`Longitud`,	`Tipo_Incidencia_ID`,`Poliza_ID`) VALUES
 (1 , 'Robo', 'Robo al aire libre', '67970954C' , '2025-04-13', 
 'AAAA', 0.8 , 0.9 , 1 , 1);
 
+
 DROP TABLE IF EXISTS `Informe`;
 CREATE TABLE `Informe` (
   `ID` int NOT NULL AUTO_INCREMENT,
-  `Perito_asociado` varchar(255) NOT NULL,
+
   `DNI_Usuario` varchar(10) NOT NULL,
   `ID_Incidencia` int NOT NULL,
   `Mensaje` varchar(1000) NOT NULL,
   PRIMARY KEY (`ID`),
-  KEY `Perito_asociado` (`Perito_asociado`),
+ 
   KEY `DNI_Usuario` (`DNI_Usuario`),
   KEY `ID_Incidencia` (`ID_Incidencia`),
-  CONSTRAINT `Informe_ibfk_1` FOREIGN KEY (`Perito_asociado`) REFERENCES `Perito` (`Num_colegiado`),
+  
   CONSTRAINT `Informe_ibfk_2` FOREIGN KEY (`DNI_Usuario`) REFERENCES `Usuario` (`DNI`),
   CONSTRAINT `Informe_ibfk_3` FOREIGN KEY (`ID_Incidencia`) REFERENCES `Incidencia` (`ID`) ON DELETE CASCADE
-);
-
-
-DROP TABLE IF EXISTS `Fraude`;
-CREATE TABLE `Fraude` (
-  `ID` int NOT NULL AUTO_INCREMENT,
-  `DNI_Usuario` varchar(10) NOT NULL,
-  `ID_Informe` int NOT NULL,
-  `Es_fraude` tinyint NOT NULL,
-  PRIMARY KEY (`ID`),
-  KEY `DNI_Usuario` (`DNI_Usuario`),
-  KEY `ID_Informe` (`ID_Informe`),
-  CONSTRAINT `Fraude_ibfk_1` FOREIGN KEY (`DNI_Usuario`) REFERENCES `Usuario` (`DNI`),
-  CONSTRAINT `Fraude_ibfk_2` FOREIGN KEY (`ID_Informe`) REFERENCES `Informe` (`ID`) ON DELETE CASCADE
 );
 
 DROP TABLE IF EXISTS `Reclamaciones`;
@@ -198,8 +194,6 @@ INSERT INTO `Seguro_hogar` (`ID`, `ID_Seguro`, `Direccion`, `Condiciones`) VALUE
 (1,	2,	'Calle Madrid, 33, 4A',	'Buenas condiciones'),
 (2,	4,	'Calle Alicante, 10',	'Condiciones normales');
 
-
-/*
 DROP TABLE IF EXISTS `Parte`;
 CREATE TABLE `Parte` (
   `ID` int NOT NULL AUTO_INCREMENT,
@@ -218,20 +212,48 @@ INSERT INTO `Parte` (`ID`, `Incidencia_ID`, `Poliza_ID`, `Descripcion`) VALUES
 (1,	1,	1,	'Descripción de los daños del incidente'),
 (2,	1,	1,	'Descripción de los daños del incidente'),
 (3,	1,	1,	'Descripción de los daños del incidente');
-*/
 
 DROP TABLE IF EXISTS `Fraude`;
 CREATE TABLE `Fraude` (
   `ID` int NOT NULL AUTO_INCREMENT,
   `DNI_Usuario` varchar(10) NOT NULL,
-  `ID_Informe` int NOT NULL,
+  `ID_Incidencia` int NOT NULL,
   `Es_fraude` tinyint NOT NULL,
   PRIMARY KEY (`ID`),
   KEY `DNI_Usuario` (`DNI_Usuario`),
-  KEY `ID_Informe` (`ID_Informe`),
+  KEY `ID_Incidencia` (`ID_Incidencia`),
   CONSTRAINT `Fraude_ibfk_1` FOREIGN KEY (`DNI_Usuario`) REFERENCES `Usuario` (`DNI`),
-  CONSTRAINT `Fraude_ibfk_2` FOREIGN KEY (`ID_Informe`) REFERENCES `Informe` (`ID`) ON DELETE CASCADE
+  CONSTRAINT `Fraude_ibfk_2` FOREIGN KEY (`ID_Incidencia`) REFERENCES `Incidencia` (`ID`) ON DELETE CASCADE
+);
+
+
+DROP TABLE IF EXISTS casosPeritos;
+CREATE TABLE casosPeritos (
+  ID int NOT NULL AUTO_INCREMENT,
+  Fecha_Inicio datetime NOT NULL,
+  DNI_Perito varchar(9) NOT NULL,
+  PRIMARY KEY (ID),
+  FOREIGN KEY (DNI_Perito) REFERENCES Perito (DNI)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+DROP TABLE IF EXISTS disponibilidadPeritos;
+CREATE TABLE disponibilidadPeritos (
+  DNI_Perito varchar(9) NOT NULL,
+  disponible tinyint(1) NOT NULL,
+  PRIMARY KEY (DNI_Perito),
+  FOREIGN KEY (DNI_Perito) REFERENCES Perito (DNI)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+DROP TABLE IF EXISTS informesPeritos;
+CREATE TABLE informesPeritos (
+  ID int NOT NULL AUTO_INCREMENT,
+  Caso int NOT NULL,
+  Mensaje varchar(1000),
+  PRIMARY KEY (ID),
+  FOREIGN KEY (Caso) REFERENCES casosPeritos (ID)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 
 -- 2025-05-11 11:00:04 UTC
 

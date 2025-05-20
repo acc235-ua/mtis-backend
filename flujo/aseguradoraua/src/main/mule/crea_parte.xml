@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:email="http://www.mulesoft.org/schema/mule/email" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd">
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="dbfd56ac-4f10-4dee-acae-86c4dacecd54" basePath="/v1/">
+		<http:request-connection host="localhost" port="8060" />
+	</http:request-config>
+	<email:smtp-config name="fake_SMTP" doc:name="Email SMTP" doc:id="eedbeaef-c677-495a-bb0d-f62a20a2f293" >
+		<email:smtp-connection host="localhost" />
+	</email:smtp-config>
+	<flow name="partesFlow" doc:id="f98173c6-a55e-48cd-a3be-f3905a9846c6" >
+		<http:listener doc:name="Iniciar Registrar Incidencia" doc:id="215ba3b4-b3a7-4308-850d-a546106872fc" config-ref="HTTP_Listener_config" path="/incidencia"/>
+		<set-variable value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	"title": payload.title,&#10;	"location": payload.location,&#10;	"description": payload.description,&#10;	"reported_by": payload.reported_by,&#10;	"num_poliza": payload.num_poliza,&#10;	"incident_type": payload.incident_type,&#10;	"evidences": payload.evidences&#10;}]' doc:name="Guardar datos" doc:id="c1f46951-1171-4f25-848c-687f6c94fef8" variableName="DatosIncidente"/>
+		<logger level="INFO" doc:name="Datos recibidos" doc:id="6c5172ba-0418-4824-9a95-651ccb8d61ae" message="#[vars.DatosIncidente]"/>
+		<choice doc:name="Choice" doc:id="99081409-08ac-435a-a172-7361441a54ea" >
+			<when expression="#[vars.DatosIncidente.title == null]">
+				<logger level="ERROR" doc:name="Logger" doc:id="b50f705f-52ee-479d-966c-59a6d84e7e16" message="No se puede registar la incidencia: No se ha especificado el título"/>
+				<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	"error": "No se ha especificado un título para la incidencia"&#10;}]' doc:name="Set Payload" doc:id="c73c2323-226f-464d-9d0e-2c2cf0e16d35" />
+			</when>
+			<when expression='#[vars.DatosIncidente.location == {"latitude": null, "longitude": null}]'>
+				<logger level="ERROR" doc:name="Logger" doc:id="9e0b0ba9-cda2-40e7-bcba-d8e40366e112" message="No se puede registar la incidencia: No se ha especificado la ubicación del incidente"/>
+				<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	"error": "No se ha especificado la ubicación de los hechos"&#10;}]' doc:name="Set Payload" doc:id="272b1ffd-dbca-4416-8e82-697ce4d89c03" />
+
+			</when>
+			<when expression="#[vars.DatosIncidente.description == null]">
+				<logger level="INFO" doc:name="Logger" doc:id="45dd54ab-172b-4a13-afab-1ce3da76bfe6" message="No se puede registar la incidencia: No se ha especificado una descripción de los hechos"/>
+				<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	"error": "No se ha especificado una descripción de los hechos"&#10;}]' doc:name="Set Payload" doc:id="cf8895c2-fd03-4d04-988a-1e14d6943ba0" />
+
+			</when>
+			<when expression="#[vars.DatosIncidente.reported_by == null]">
+				<logger level="ERROR" doc:name="Logger" doc:id="14d5b00e-3a71-4d31-b1c4-7bf37f958b30" message="No se puede registar la incidencia: No se ha especificado el usuario que reportó el incidente"/>
+				<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	"error": "No se ha especificado el usuario que reportó el incidente"&#10;}]' doc:name="Set Payload" doc:id="350ad603-4849-4482-84fc-022ccc2dba3a" />
+
+			</when>
+			<when expression="#[vars.DatosIncidente.num_poliza == null]">
+				<logger level="ERROR" doc:name="Logger" doc:id="a53efebf-965b-4ad7-ad0c-ff40003eac7b" message="No se puede registar la incidencia: No se ha especificado el número de póliza"/>
+				<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	"error": "No se ha especificado el número de póliza"&#10;}]' doc:name="Set Payload" doc:id="c5822d94-cf0b-49b4-968f-e34c5ebb4aef" />
+
+			</when>
+			<when expression="#[vars.DatosIncidente.incident_type == null]">
+				<logger level="ERROR" doc:name="Logger" doc:id="3c0be268-673c-428b-be46-527f58d3d97d" message="No se puede registar la incidencia: No se ha especificado el tipo de incidente"/>
+				<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	"error": "No se ha especificado el tipo de incidente"&#10;}]' doc:name="Set Payload" doc:id="445fc043-a214-4d53-b76f-6934c4177695" />
+
+			</when>
+			<otherwise >
+				<logger level="INFO" doc:name="Logger" doc:id="d7ffd3b8-3b70-42dd-91a8-98afeb5ee20f" message="Todos los datos se han recibido" />
+				<logger level="INFO" doc:name="Logger" doc:id="39ba339d-66b3-4467-a5ef-aa63baaa1604" message="#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	policy_number: vars.DatosIncidente.num_poliza	&#10;}]"/>
+				<set-payload value="#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	policy_number: vars.DatosIncidente.num_poliza	&#10;}]" doc:name="Set Payload" doc:id="db53fba8-d1d5-4cdc-b401-6a158ea5fea4" />
+				<logger level="INFO" doc:name="Logger" doc:id="2e82f289-b1be-4382-b0c8-793b1ad968c6" message="#[payload]"/>
+				<http:request method="POST" doc:name="Request" doc:id="4869c609-a1ee-44fd-92c3-eb8b87e4a791" url="http://localhost:8060/v1/insurance/policy/validate/">
+				</http:request>
+				<choice doc:name="Choice" doc:id="25274aac-cef5-457b-8a25-7bd77e32ebb5">
+					<when expression="#[payload.valid]">
+						<logger level="INFO" doc:name="Logger" doc:id="c3950065-57c4-4513-825b-a2530188cd50" message="#[payload]" />
+						<logger level="INFO" doc:name="Logger" doc:id="6846bc52-68cf-423f-9056-c7577e62130c" message='#[{&#10;  "title": vars.DatosIncidente.title,&#10;  "location": vars.DatosIncidente.location,&#10;  "description": vars.DatosIncidente.description,&#10;  "reported_by": vars.DatosIncidente.reported_by,&#10;  "num_poliza": vars.DatosIncidente.num_poliza,&#10;  "incident_type": vars.DatosIncidente.incident_type&#10;}]'/>
+						<http:request method="POST" doc:name="Request" doc:id="ff9ff312-3b3e-4c85-b968-b219a379c0d3" config-ref="HTTP_Request_configuration" path="incidents">
+							<http:body ><![CDATA[#[{
+  "title": vars.DatosIncidente.title,
+  "location": vars.DatosIncidente.location,
+  "description": vars.DatosIncidente.description,
+  "reported_by": vars.DatosIncidente.reported_by,
+  "num_poliza": vars.DatosIncidente.num_poliza,
+  "incident_type": vars.DatosIncidente.incident_type
+}]]]></http:body>
+						</http:request>
+						<set-variable value="#[payload.incident_id]" doc:name="Set Variable" doc:id="3b7f4a06-2a02-4885-86c2-81b1f220a5e2" variableName="NumeroSeguimiento"/>
+						<logger level="INFO" doc:name="Logger" doc:id="eb087a5c-59dd-4c99-9f2a-5fe74314d907" message="-------&gt;&gt;&gt;&gt; #[vars.NumeroSeguimiento]"/>
+						<choice doc:name="Choice" doc:id="6dfc1abe-e745-4970-b5ff-8e1102c9f2ce" >
+							<when expression="#[vars.DatosIncidente.evidences == null]">
+								<logger level="INFO" doc:name="Logger" doc:id="d3294534-807f-41b3-9d08-88444fb0f727" message="Faltan evidencias"/>
+								<email:send doc:name="Send" doc:id="33873489-73a9-44f3-b9c2-471cb2bc7d22" fromAddress="rrhh@seguros.mtis.com" subject="Seguimiento parte con número: #[vars.NumeroSeguimiento]" config-ref="fake_SMTP">
+									<email:to-addresses >
+										<email:to-address value="#[vars.DatosIncidente.reported_by.email]" />
+									</email:to-addresses>
+									<email:body >
+										<email:content ><![CDATA[Le notificamos que el parte con número de seguimiento #[vars.NumeroSeguimiento] que ha intentado registrar se ha rechazado por falta de evidencias.
+Puedes modificar el parte o adjuntar nuevas evidencias si crees que se trata de un error.]]></email:content>
+									</email:body>
+								</email:send>
+								<http:request method="PUT" doc:name="Request" doc:id="e206fe9f-0ef6-4f92-a18a-851e2c2fb656" config-ref="HTTP_Request_configuration" path="claims/{num_seguimiento}">
+									<http:body ><![CDATA[#[%dw 2.0
+output application/json
+---
+{
+	"status": "solicitud de información adicional"
+}]]]></http:body>
+									<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	"num_seguimiento" : vars.NumeroSeguimiento
+}]]]></http:uri-params>
+								</http:request>
+							</when>
+							<when expression='#[vars.DatosIncidente.evidences == ""]'>
+								<logger level="INFO" doc:name="Logger" doc:id="7922ae00-2ea1-402b-b82e-f17a3490059d" message="El parte ha sido rechazado por falta de convicción en las evidencias"/>
+								<email:send doc:name="Send" doc:id="f2e54dda-8d73-4f56-8a72-1141fc6d1423" fromAddress="rrhh@seguros.mtis.com" subject="Seguimiento parte con número: #[vars.NumeroSeguimiento]" config-ref="fake_SMTP">
+									<email:to-addresses >
+										<email:to-address value="#[vars.DatosIncidente.reported_by.email]" />
+									</email:to-addresses>
+									<email:body >
+										<email:content ><![CDATA[Le notificamos que el parte con número de seguimiento #[vars.NumeroSeguimiento] ha sido denegado por falta de pruebas claras.
+Puede modificar el parte en el futuro si crees que se trata de un error.]]></email:content>
+									</email:body>
+								</email:send>
+								<http:request method="PUT" doc:name="Request" doc:id="3c6a7693-f3d4-4ae2-8181-22e17a4d400b" config-ref="HTTP_Request_configuration" path="claims/{num_seguimiento}" >
+									<http:body ><![CDATA[#[%dw 2.0
+output application/json
+---
+{
+	"status": "rechazado"
+}]]]></http:body>
+									<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	"num_seguimiento" : vars.NumeroSeguimiento
+}]]]></http:uri-params>
+								
+</http:request>
+							
+</when>
+							<otherwise >
+								<logger level="INFO" doc:name="Logger" doc:id="9b269160-7f1f-4dde-89cc-67e471e77086" message="El parte se da como aceptado. En breves recibirá un correo electrónico con la información de su parte"/>
+								<email:send doc:name="Send" doc:id="94abb127-5611-412c-881d-995fff1134bb" fromAddress="rrhh@seguros.mtis.com" subject="Seguimiento parte con número: #[vars.NumeroSeguimiento]" config-ref="fake_SMTP">
+									<email:to-addresses >
+										<email:to-address value="#[vars.DatosIncidente.reported_by.email]" />
+									</email:to-addresses>
+									<email:body >
+										<email:content ><![CDATA[Le notificamos que el parte con número de seguimiento #[vars.NumeroSeguimiento] ha sido aprobado.]]></email:content>
+									</email:body>
+								</email:send>
+								<http:request method="PUT" doc:name="Request" doc:id="1b43e79d-1269-4b51-a0c4-475adfcd0246" config-ref="HTTP_Request_configuration" path="claims/{num_seguimiento}" >
+									<http:body ><![CDATA[#[%dw 2.0
+output application/json
+---
+{
+	"status": "aprobado"
+}]]]></http:body>
+									<http:uri-params ><![CDATA[#[{
+	num_seguimiento : vars.NumeroSeguimiento
+}]]]></http:uri-params>
+								
+</http:request>
+							</otherwise>
+						</choice>
+						<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	"message": "Se ha registrado el parte en el sistema",&#10;	"num_seguimiento": vars.NumeroSeguimiento&#10;}]' doc:name="Set Payload" doc:id="f0d70411-8c1e-4d23-8118-2bf5d9638075" />
+					
+</when>
+					<otherwise >
+						<logger level="INFO" doc:name="Logger" doc:id="9322792a-c2ba-4c3f-bdf1-691b2cadebbe" message="#[payload]"/>
+						<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	"message": "La póliza no es válida",&#10;	"poliza": payload&#10;}]' doc:name="Set Payload" doc:id="bed28780-2012-4b4f-a36b-098445455e4e" />
+					</otherwise>
+				</choice>
+			</otherwise>
+		</choice>
+	</flow>
+</mule>
