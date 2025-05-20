@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
-	xmlns:http="http://www.mulesoft.org/schema/mule/http"
-	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+<mule xmlns:email="http://www.mulesoft.org/schema/mule/email" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
-http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd">
 	<http:listener-config name="HTTP_Listener_config-seguros" doc:name="HTTP Listener config" doc:id="c1a6be61-1f69-42a9-b27b-e204b867eb94" >
 		<http:listener-connection host="0.0.0.0" port="8082" />
 	</http:listener-config>
@@ -58,6 +59,23 @@ output application/json
 	'condiciones': "Condicion"
 }]]]></db:input-parameters>
 				</db:insert>
+				<db:select doc:name="Select1" doc:id="76c71c74-221b-4148-aecd-2f5fb887ea20" config-ref="Database_Config" target="precioSeguro">
+							<db:sql><![CDATA[SELECT Precio from seguro WHERE ID = :idSeguro]]></db:sql>
+							<db:input-parameters><![CDATA[#[{
+	idSeguro : vars.id_seguro.ID
+}]]]></db:input-parameters>
+						</db:select>
+				<db:select doc:name="Select2" doc:id="20189e0c-8a5e-43f2-aba4-7b108ad3b9fa" target="emailUsuario" config-ref="Database_Config">
+					<db:sql><![CDATA[SELECT Correo FROM usuario WHERE DNI = :dni]]></db:sql>
+					<db:input-parameters><![CDATA[#[{
+	dni: vars.seguro_auto.DNI_Usuario
+}]]]></db:input-parameters>
+				</db:select>
+				<email:send doc:name="Send1" doc:id="0957c706-a6b8-4d9e-8e6d-b5285836df2a" config-ref="fake_SMTP" fromAddress="aseguradoraUA@gmail.com" subject="seguro creado con precio #[vars.precioSeguro.Precio]" toAddresses="#[vars.emailUsuario.Correo]">
+					<email:body>
+						<email:content><![CDATA[#["body"]]]></email:content>
+					</email:body>
+				</email:send>
 				<set-payload value="Seguro de coche creado correctamente" doc:name="Set Payload" doc:id="dac13257-a61a-4fe3-9175-d0f33e252cde" />
 			</when>
 			<otherwise>
@@ -85,6 +103,24 @@ output application/json
 	'condiciones': "Condicion"
 }]]]></db:input-parameters>
 						</db:insert>
+						<db:select doc:name="Select" doc:id="36175537-ca3e-4fd5-a67a-d40865fe799d" target="emailUsuario" config-ref="Database_Config">
+							<db:sql><![CDATA[SELECT Correo FROM usuario WHERE DNI = :dni]]></db:sql>
+							<db:input-parameters><![CDATA[#[{
+	dni: vars.seguro_hogar.DNI_Usuario
+}]]]></db:input-parameters>
+						</db:select>
+						<db:select doc:name="Select" doc:id="fae37bd1-964c-4864-b90c-37a4c4eb08cc" config-ref="Database_Config" target="precioSeguro">
+							<db:sql ><![CDATA[SELECT Precio from seguro WHERE ID = :idSeguro]]></db:sql>
+							<db:input-parameters ><![CDATA[#[{
+	idSeguro : vars.id_seguro_hogar.ID
+}]]]></db:input-parameters>
+						</db:select>
+						<logger level="INFO" doc:name="Logger" doc:id="81aa07a5-60b6-45c6-ba77-0d9c856feb4a" message="#[vars.emailUsuario.Correo[0]]"/>
+						<email:send doc:name="Send" doc:id="14dcc2e2-2d51-4ded-86b3-becb33449627" config-ref="fake_SMTP" fromAddress="aseguradoraUA@gmail.com" subject="seguro creado con precio #[vars.precioSeguro.Precio]" toAddresses="#[vars.emailUsuario.Correo]">
+							<email:body >
+								<email:content ><![CDATA[#["body"]]]></email:content>
+							</email:body>
+						</email:send>
 						<set-payload value="Seguro de hogar creado correctamente" doc:name="Set Payload" doc:id="37fb74cf-8095-41c6-886a-c9a4be78192e" />
 					</when>
 				</choice>
