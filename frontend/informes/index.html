@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informes de Incidencias</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Generación de Informes de Incidencias</h1>
+    
+    <div class="search-form">
+        <input type="text" id="claim-id" placeholder="Ingrese el ID de la incidencia">
+        <button id="search-btn">Buscar</button>
+    </div>
+    
+    <div id="result-message" class="message" style="display: none;"></div>
+    
+    <div id="incident-details" class="incident-details">
+        <h2>Detalles de la Incidencia</h2>
+        
+        <div class="incident-summary">
+            <div class="field-group">
+                <span class="field-label">ID de Incidencia:</span>
+                <span id="id-value" class="field-value"></span>
+            </div>
+            
+            <div class="field-group">
+                <span class="field-label">Título:</span>
+                <span id="title-value" class="field-value"></span>
+            </div>
+            
+            <div class="field-group">
+                <span class="field-label">Estado Actual:</span>
+                <span id="status-value" class="field-value"></span>
+            </div>
+        </div>
+        
+        <div class="field-group">
+            <span class="field-label">Descripción:</span>
+            <span id="description-value" class="field-value"></span>
+        </div>
+        
+        <div class="field-group">
+            <span class="field-label">Fecha:</span>
+            <span id="date-value" class="field-value"></span>
+        </div>
+        
+        <div class="field-group">
+            <span class="field-label">Evidencias:</span>
+            <span id="evidence-value" class="field-value"></span>
+        </div>
+        
+        <div class="field-group">
+            <span class="field-label">Ubicación:</span>
+            <div id="location-value" class="field-value">
+                <div>Latitud: <span id="latitude-value"></span></div>
+                <div>Longitud: <span id="longitude-value"></span></div>
+            </div>
+        </div>
+        
+        <div class="report-section">
+            <h3>Generar Informe</h3>
+            <div class="form-group">
+                <label for="dni-usuario">DNI del Usuario:</label>
+                <input type="text" id="dni-usuario" placeholder="Ej: 12345678X">
+            </div>
+            
+            <div class="form-group">
+                <label for="correo-destinatario">Correo Electrónico:</label>
+                <input type="email" id="correo-destinatario" placeholder="ejemplo@correo.com">
+            </div>
+            
+            <div class="form-group">
+                <label for="informe-texto">Informe:</label>
+                <textarea id="informe-texto" placeholder="Escriba su informe sobre la incidencia..."></textarea>
+            </div>
+            
+            <div class="buttons-container">
+                <button id="save-report-btn" class="btn-primary">Guardar Informe</button>
+                <button id="send-email-btn" class="btn-secondary">Enviar por Correo</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>

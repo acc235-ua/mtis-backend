@@ -1,282 +1,214 @@
 openapi: 3.0.0
 info:
   title: Incident Management API
+  description: "API para la gestión de incidentes, partes de seguros y evidencias."
   version: 1.0.0
-  description: API para la gestión de incidentes, partes de seguros y evidencias.
 servers:
-  - url: https://api.incident-management.com/v1
-    description: Servidor de producción
-
+- url: https://api.incident-management.com/v1
+  description: Servidor de producción
 tags:
-  - name: Seguros
-    description: Operaciones relacionadas con los seguros
-  - name: Poliza
-    description: Gestión de pólizas de seguro
-  - name: Incidencias
-    description: Gestión de incidencias
-  - name: Usuario
-    description: Validación y datos de usuarios
-  - name: Reclamaciones
-    description: Procesamiento de reclamaciones
-  - name: Indemnizacion
-    description: Consulta de indemnizaciones
-  - name: Fraude
-    description: Análisis de posibles fraudes
-  - name: Notificar
-    description: Notificaciones al usuario
-  - name: Comprobacion
-    description: Comprobaciones y verificaciones
-  - name: Registrar
-    description: hacer el registro
-  - name: IniciarSesion
-    description: iniciarSesion
-  - name: Incidente
-    description: incidentes
-  - name: Evidencia
-    description: evidence
-  - name: Claims
-    description: claims
-
-
+- name: Seguros
+  description: Operaciones relacionadas con los seguros
+- name: Poliza
+  description: Gestión de pólizas de seguro
+- name: Incidencias
+  description: Gestión de incidencias
+- name: Usuario
+  description: Validación y datos de usuarios
+- name: Reclamaciones
+  description: Procesamiento de reclamaciones
+- name: Indemnizacion
+  description: Consulta de indemnizaciones
+- name: Fraude
+  description: Análisis de posibles fraudes
+- name: Notificar
+  description: Notificaciones al usuario
+- name: Comprobacion
+  description: Comprobaciones y verificaciones
+- name: Registrar
+  description: hacer el registro
+- name: IniciarSesion
+  description: iniciarSesion
+- name: Incidente
+  description: incidentes
+- name: Evidencia
+  description: evidence
+- name: Claims
+  description: claims
 paths:
   /auth/register:
     post:
       tags:
-        - Registrar
+      - Registrar
       summary: Registrar un nuevo usuario
+      operationId: authRegisterPOST
       requestBody:
-        required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                username:
-                  type: string
-                email:
-                  type: string
-                password:
-                  type: string
+              $ref: "#/components/schemas/auth_register_body"
+        required: true
       responses:
-        '201':
+        "201":
           description: Usuario registrado exitosamente
-        '400':
+        "400":
           description: Datos de entrada inválidos
-
+      x-swagger-router-controller: Registrar
   /auth/login:
     post:
       tags:
-        - IniciarSesion
+      - IniciarSesion
       summary: Iniciar sesión
+      operationId: authLoginPOST
       requestBody:
-        required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                username:
-                  type: string
-                password:
-                  type: string
+              $ref: "#/components/schemas/auth_login_body"
+        required: true
       responses:
-        '200':
+        "200":
           description: Token de autenticación
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  token:
-                    type: string
-        '401':
+                $ref: "#/components/schemas/inline_response_200"
+        "401":
           description: No autorizado
-        '403':
+        "403":
           description: Credenciales inválidas
-
+      x-swagger-router-controller: IniciarSesion
   /incidents:
     post:
       tags:
-        - Incidente
+      - Incidente
       summary: Registrar un nuevo incidente
+      operationId: incidentsPOST
       requestBody:
-        required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                incident_type:
-                  type: string
-                location:
-                  type: object
-                  properties:
-                    latitude:
-                      type: number
-                    longitude:
-                      type: number
-                description:
-                  type: string
-                reported_by:
-                  type: object
-                  properties:
-                    name:
-                      type: string
-                    contact:
-                      type: string
+              $ref: "#/components/schemas/incidents_body"
+        required: true
       responses:
-        '201':
+        "201":
           description: Incidente registrado
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  incident_id:
-                    type: string
-        '400':
+                $ref: "#/components/schemas/inline_response_201"
+        "400":
           description: Datos de entrada inválidos
-        '401':
+        "401":
           description: No autorizado
-
+      x-swagger-router-controller: Incidente
   /insurance/claim:
     post:
       tags:
-        - Incidente
+      - Incidente
       summary: Crear parte de seguro asociado a un incidente
+      operationId: insuranceClaimPOST
       requestBody:
-        required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                incident_id:
-                  type: string
-                insured_name:
-                  type: string
-                policy_number:
-                  type: string
-                damage_description:
-                  type: string
+              $ref: "#/components/schemas/insurance_claim_body"
+        required: true
       responses:
-        '201':
+        "201":
           description: Parte de seguro registrado exitosamente
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  claim_id:
-                    type: string
-        '400':
+                $ref: "#/components/schemas/inline_response_201_1"
+        "400":
           description: Datos incompletos o inválidos
-        '401':
+        "401":
           description: No autorizado
-
+      x-swagger-router-controller: Incidente
   /insurance/policy/validate:
     post:
       tags:
-        - Incidente
+      - Incidente
       summary: Validar si una póliza está en el sistema
+      operationId: insurancePolicyValidatePOST
       requestBody:
-        required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                policy_number:
-                  type: string
+              $ref: "#/components/schemas/policy_validate_body"
+        required: true
       responses:
-        '200':
+        "200":
           description: Póliza válida
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  valid:
-                    type: boolean
-                  policy_details:
-                    type: object
-                    properties:
-                      holder_name:
-                        type: string
-                      coverage:
-                        type: string
-        '404':
-          description: Póliza no encontrada
-        '401':
+                $ref: "#/components/schemas/inline_response_200_1"
+        "401":
           description: No autorizado
-
+        "404":
+          description: Póliza no encontrada
+      x-swagger-router-controller: Incidente
   /evidence/upload:
     post:
       tags:
-        - Evidencia
+      - Evidencia
       summary: Adjuntar una evidencia
+      operationId: evidenceUploadPOST
       requestBody:
-        required: true
         content:
-          multipart/form-data:
+          application/json:  # Changed from multipart/form-data to application/json
             schema:
-              type: object
-              properties:
-                claim_id:
-                  type: string
-                file:
-                  type: string
-                  format: binary
+              $ref: "#/components/schemas/evidence_upload_body"
+        required: true
       responses:
-        '201':
+        "201":
           description: Evidencia adjuntada exitosamente
-        '400':
-          description: Archivo inválido o datos incompletos
-        '401':
+        "400":
+          description: Datos inválidos o incompletos
+        "401":
           description: No autorizado
-
+      x-swagger-router-controller: Evidencia
   /claims/{claim_id}/status:
     get:
       tags:
-        - Claims
+      - Claims
       summary: Consultar el estado de un parte de seguro
+      operationId: claimsClaim_idStatusGET
       parameters:
-        - name: claim_id
-          in: path
-          required: true
-          schema:
-            type: string
+      - name: claim_id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
       responses:
-        '200':
+        "200":
           description: Estado del parte de seguro
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  claim_id:
-                    type: string
-                  status:
-                    type: string
-                    enum: [en revision, solicitud de información adicional, rechazado, aprobado]
-        '404':
-          description: Parte de seguro no encontrado
-        '401':
+                $ref: "#/components/schemas/inline_response_200_2"
+        "401":
           description: No autorizado
-          
-
+        "404":
+          description: Parte de seguro no encontrado
+      x-swagger-router-controller: Claims
   /seguro:
     post:
       tags:
-        - Seguros
+      - Seguros
       summary: Crear un seguro
       description: Crea un nuevo seguro a partir de datos
+      operationId: seguroPOST
       requestBody:
-        required: true
         content:
           application/json:
             schema:
               $ref: "#/components/schemas/Seguro"
+        required: true
       responses:
         "201":
           description: Seguro creado correctamente
@@ -286,19 +218,22 @@ paths:
                 $ref: "#/components/schemas/Seguro"
         "400":
           description: Datos inválidos
-
+      x-swagger-router-controller: Seguros
   /seguro/{cliente}:
     get:
       tags:
-        - Seguros
+      - Seguros
       summary: Consultar seguros de un cliente
       description: Consulta todos los seguros de un cliente
+      operationId: seguroClienteGET
       parameters:
-        - name: cliente
-          in: path
-          required: true
-          schema:
-            type: string
+      - name: cliente
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
       responses:
         "200":
           description: Seguro devuelto correctamente
@@ -308,24 +243,29 @@ paths:
                 $ref: "#/components/schemas/Seguro"
         "400":
           description: Datos inválidos
-          
+      x-swagger-router-controller: Seguros
   /seguro/{cliente}/{id}:
     get:
       tags:
-        - Seguros
+      - Seguros
       summary: Consultar seguro de un cliente
       description: Consulta un único seguro de un cliente
+      operationId: seguroClienteIdGET
       parameters:
-        - name: cliente
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
+      - name: cliente
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
       responses:
         "200":
           description: Seguros devueltos correctamente
@@ -335,28 +275,34 @@ paths:
                 $ref: "#/components/schemas/Seguro"
         "400":
           description: Datos inválidos
+      x-swagger-router-controller: Seguros
     put:
       tags:
-        - Seguros
+      - Seguros
       summary: Actualizar un seguro de un cliente
       description: Actualiza un seguro de un cliente
+      operationId: seguroClienteIdPUT
       parameters:
-        - name: cliente
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-      requestBody:
+      - name: cliente
+        in: path
         required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      requestBody:
         content:
           application/json:
             schema:
               $ref: "#/components/schemas/Seguro"
+        required: true
       responses:
         "200":
           description: Seguro actualizado correctamente
@@ -368,19 +314,20 @@ paths:
           description: Datos inválidos
         "404":
           description: Seguro no encontrado
-
+      x-swagger-router-controller: Seguros
   /seguroPrecio:
     post:
       tags:
-        - Seguros
+      - Seguros
       summary: Calcular precio
       description: Calcula el precio de un seguro segun sus datos
+      operationId: seguroPrecioPOST
       requestBody:
-        required: true
         content:
           application/json:
             schema:
               $ref: "#/components/schemas/Seguro"
+        required: true
       responses:
         "201":
           description: Precio calculado correctamente
@@ -390,18 +337,20 @@ paths:
                 $ref: "#/components/schemas/Seguro"
         "400":
           description: Datos inválidos
+      x-swagger-router-controller: Seguros
   /poliza:
     post:
       tags:
-        - Poliza
+      - Poliza
       summary: Crear poliza
       description: Crear una nueva polzia
+      operationId: polizaPOST
       requestBody:
-        required: true
         content:
           application/json:
             schema:
               $ref: "#/components/schemas/Poliza"
+        required: true
       responses:
         "201":
           description: Póliza creada correctamente
@@ -411,18 +360,22 @@ paths:
                 $ref: "#/components/schemas/Poliza"
         "400":
           description: Datos inválidos
+      x-swagger-router-controller: Poliza
   /poliza/{cliente}/:
     get:
       tags:
-        - Poliza
+      - Poliza
       summary: Consultar pólizas de un cliente
       description: Consulta todas las pólizas de un cliente
+      operationId: polizaClienteGET
       parameters:
-        - name: cliente
-          in: path
-          required: true
-          schema:
-            type: string
+      - name: cliente
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
       responses:
         "200":
           description: Póliza devuelta correctamente
@@ -432,17 +385,21 @@ paths:
                 $ref: "#/components/schemas/Poliza"
         "400":
           description: Datos inválidos
+      x-swagger-router-controller: Poliza
     post:
       tags:
-        - Poliza
+      - Poliza
       summary: Enviar póliza al cliente
       description: Envía la póliza al cliente
+      operationId: polizaClientePOST
       parameters:
-        - name: cliente
-          in: path
-          required: true
-          schema:
-            type: string
+      - name: cliente
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
       responses:
         "200":
           description: Póliza enviada correctamente
@@ -452,24 +409,29 @@ paths:
                 $ref: "#/components/schemas/Poliza"
         "400":
           description: Datos inválidos
-          
+      x-swagger-router-controller: Poliza
   /poliza/{cliente}/{id}:
     get:
       tags:
-        - Poliza
+      - Poliza
       summary: Consultar póliza de un cliente
       description: Consulta una única póliza de un cliente
+      operationId: polizaClienteIdGET
       parameters:
-        - name: cliente
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
+      - name: cliente
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
       responses:
         "200":
           description: Pólizas devueltas correctamente
@@ -479,7 +441,7 @@ paths:
                 $ref: "#/components/schemas/Poliza"
         "400":
           description: Datos inválidos
-  
+      x-swagger-router-controller: Poliza
   /fraude/{dni_usuario}:
     get:
       tags:
@@ -495,82 +457,96 @@ paths:
           type: string
       responses:
         "200":
+        "200":
           description: Comprobacion exitosa
         "400":
           description: Datos inválidos
-  
+      x-swagger-router-controller: Fraude
   /user/validate{user_nif}:
     get:
       tags:
-        - Usuario
+      - Usuario
       summary: Validacion de usuario
       description: Validacion de usuario
+      operationId: userValidateuser_nifGET
       parameters:
-        - name: user_nif
-          in: path
-          required: true
-          schema:
-            type: string
+      - name: user_nif
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
       responses:
-        '200':
+        "200":
           description: Validacion exitosa
         "400":
           description: Datos inválidos
-          
+      x-swagger-router-controller: Usuario
   /incidence/type{file_inf}:
     get:
       tags:
-        - Incidencias
+      - Incidencias
       summary: Comprueba el tipo de dato
       description: Comprueba el tipo de dato
+      operationId: incidenceTypefile_infGET
       parameters:
-        - name: file_inf
-          in: path
-          required: true
-          schema:
-            type: string
+      - name: file_inf
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
       responses:
-        '200':
+        "200":
           description: Comprobacion exitosa
         "400":
           description: Datos inválidos
-          
-          
+      x-swagger-router-controller: Incidencias
   /incidence/contract{user_nif}/{type_incidence}:
     get:
       tags:
-        - Incidencias
+      - Incidencias
       summary: Constracta incidencias
       description: Constracta incidencias
+      operationId: incidenceContractuser_nifType_incidenceGET
       parameters:
-        - name: user_nif
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: type_incidence
-          in: path
-          required: true
-          schema:
-            type: string
+      - name: user_nif
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: type_incidence
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
       responses:
-        '200':
+        "200":
           description: Coincidencia exitosa
         "400":
           description: Datos inválidos
-          
+      x-swagger-router-controller: Incidencias
   /incidence/recent{user_nif}:
     post:
       tags:
-        - Incidencias
+      - Incidencias
       summary: Devuelve las ultimas incidencias
       description: Devuelve las ultimas incidencias
+      operationId: incidenceRecentuser_nifPOST
       parameters:
-        - name: user_nif
-          in: path
-          required: true
-          schema:
-            type: string
+      - name: user_nif
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
       responses:
         "200":
           description: Lista enviada correctamente
@@ -580,28 +556,35 @@ paths:
                 $ref: "#/components/schemas/Lista_Inc"
         "400":
           description: Devolucion inválidos
-          
+      x-swagger-router-controller: Incidencias
   /reclamacion/{id_Reclamacion}/{cliente}/{id}:
     get:
       tags:
-        - Reclamaciones
+      - Reclamaciones
       description: Consulta si la poliza del cliente cubre la reclamación
+      operationId: reclamacionId_ReclamacionClienteIdGET
       parameters:
-        - name: id_Reclamacion
-          in: path
-          required: true
-          schema:
-            type: integer
-        - name: cliente
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
+      - name: id_Reclamacion
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      - name: cliente
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
       responses:
         "200":
           description: Consulta realizada correctamente
@@ -611,23 +594,28 @@ paths:
                 $ref: "#/components/schemas/Reclamacion"
         "400":
           description: Datos inválidos
-          
+      x-swagger-router-controller: Reclamaciones
   /indemnizacion/{cliente}/{id}:
     get:
       tags:
-        - Indemnizacion
+      - Indemnizacion
       description: Consulta la cantidad a percibir por el usuario
+      operationId: indemnizacionClienteIdGET
       parameters:
-        - name: cliente
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
+      - name: cliente
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
       responses:
         "200":
           description: Consulta realizada correctamente
@@ -637,28 +625,36 @@ paths:
                 $ref: "#/components/schemas/Indemnizacion"
         "400":
           description: Datos inválidos
-          
+      x-swagger-router-controller: Indemnizacion
   /comprobar:
     get:
       tags:
-        - Comprobacion
-      description: Consulta si los datos proporcionados inicialmente por el usuario son correctos
+      - Comprobacion
+      description: Consulta si los datos proporcionados inicialmente por el usuario
+        son correctos
+      operationId: comprobarGET
       parameters:
-        - name: cliente
-          in: query
-          required: true
-          schema:
-            type: string
-        - name: seguro
-          in: query
-          required: true
-          schema:
-            type: integer
-        - name: poliza
-          in: query
-          required: true
-          schema:
-            type: integer
+      - name: cliente
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: seguro
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: integer
+      - name: poliza
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: integer
       responses:
         "200":
           description: Consulta realizada correctamente
@@ -668,33 +664,36 @@ paths:
                 $ref: "#/components/schemas/Comprobacion"
         "400":
           description: Datos inválidos
-  
+      x-swagger-router-controller: Comprobacion
   /notificar/{id_usuario}:
     put:
       tags:
-        - Notificar
+      - Notificar
       description: Notifica al usuario la resolucion
+      operationId: notificarId_usuarioPUT
       parameters:
-        - name: id_usuario
-          in: path
-          required: true
-          schema:
-            type: string
+      - name: id_usuario
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
       responses:
         "200":
           description: Notificado correctamente
         "400":
           description: Datos inválidos
-          
+      x-swagger-router-controller: Notificar
 components:
   schemas:
-  
     Reclamacion:
       type: object
       properties:
         ok:
           type: boolean
-          
+      example:
+        ok: true
     Indemnizacion:
       type: object
       properties:
@@ -702,13 +701,16 @@ components:
           type: boolean
         suma:
           type: number
-    
+      example:
+        suma: 0.8008281904610115
+        ok: true
     Comprobacion:
       type: object
       properties:
         ok:
           type: boolean
-  
+      example:
+        ok: true
     Fraude:
       type: object
       properties:
@@ -719,31 +721,29 @@ components:
     Usuario:
       type: object
       properties:
-          user_nif:
-            type: string
-            description: Nif de usuario
-            
+        user_nif:
+          type: string
+          description: Nif de usuario
     Lista_Inc:
       type: object
       properties:
-          lista_Inc:
-            type: string
-            description: Lista de incidencias
-    
+        lista_Inc:
+          type: string
+          description: Lista de incidencias
+      example:
+        lista_Inc: lista_Inc
     Incidencias:
       type: object
       properties:
-          user_nif:
-            type: string
-            description: Nif de usuario
-          file_inf:
-            type: string
-            description: Informe
-          type_incidence:
-            type: string
-            description: Tipo de incidencia
-        
-  
+        user_nif:
+          type: string
+          description: Nif de usuario
+        file_inf:
+          type: string
+          description: Informe
+        type_incidence:
+          type: string
+          description: Tipo de incidencia
     Seguro:
       type: object
       properties:
@@ -756,7 +756,10 @@ components:
         precio:
           type: integer
           description: Precio del seguro
-
+      example:
+        cliente: cliente
+        tipo: tipo
+        precio: 0
     Poliza:
       type: object
       properties:
@@ -768,15 +771,141 @@ components:
           description: Dirección del cliente
         fecha_inicio:
           type: string
-          format: date
           description: Fecha de inicio de la Póliza
+          format: date
         fecha_fin:
           type: string
-          format: date
           description: Fecha de término de la Póliza
+          format: date
         precio:
           type: integer
           description: Precio del seguro
         deducible:
           type: integer
           description: Precio a pagar en caso de siniestro
+      example:
+        precio: 0
+        fecha_inicio: 2000-01-23
+        fecha_fin: 2000-01-23
+        direccion: direccion
+        nombre: nombre
+        deducible: 6
+    auth_register_body:
+      type: object
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+    auth_login_body:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+    inline_response_200:
+      type: object
+      properties:
+        token:
+          type: string
+      example:
+        token: token
+    incidents_location:
+      type: object
+      properties:
+        latitude:
+          type: number
+        longitude:
+          type: number
+    incidents_reported_by:
+      type: object
+      properties:
+        dni:
+          type: string
+    incidents_body:
+      type: object
+      properties:
+        title:
+          type: string
+        location:
+          $ref: "#/components/schemas/incidents_location"
+        description:
+          type: string
+        reported_by:
+          $ref: "#/components/schemas/incidents_reported_by"
+    inline_response_201:
+      type: object
+      properties:
+        incident_id:
+          type: string
+      example:
+        incident_id: incident_id
+    insurance_claim_body:
+      type: object
+      properties:
+        incident_id:
+          type: string
+        policy_number:
+          type: string
+        damage_description:
+          type: string
+    inline_response_201_1:
+      type: object
+      properties:
+        claim_id:
+          type: string
+      example:
+        claim_id: claim_id
+    policy_validate_body:
+      type: object
+      properties:
+        policy_number:
+          type: string
+    inline_response_200_1:
+      type: object
+      properties:
+        valid:
+          type: boolean
+        policy_details:
+          $ref: "#/components/schemas/inline_response_200_1_policy_details"
+      example:
+        valid: true
+        policy_details:
+          coverage: coverage
+          holder_name: holder_name
+    evidence_upload_body:
+      type: object
+      properties:
+        claim_id:
+          type: string
+        evidence:
+          type: string
+          description: Descripción textual de la evidencia
+    inline_response_200_2:
+      type: object
+      properties:
+        claim_id:
+          type: string
+        status:
+          type: string
+          enum:
+          - en revision
+          - solicitud de información adicional
+          - rechazado
+          - aprobado
+      example:
+        claim_id: claim_id
+        status: en revision
+    inline_response_200_1_policy_details:
+      type: object
+      properties:
+        holder_name:
+          type: string
+        coverage:
+          type: string
+      example:
+        coverage: coverage
+        holder_name: holder_name

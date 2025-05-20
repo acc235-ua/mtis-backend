@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Incidente</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Registrar Nuevo Incidente</h1>
+    
+    <form id="incidentForm">
+        <div class="form-group">
+            <label for="incident_type">Tipo de Incidente:</label>
+            <input type="number" id="incident_type" required>
+        </div>
+
+        <div class="form-group">
+            <label for="title">Título:</label>
+            <textarea id="title" rows="4" required></textarea>
+        </div>
+        
+        <div class="form-group">
+            <label for="description">Descripción:</label>
+            <textarea id="description" rows="4" required></textarea>
+        </div>
+        
+        <div class="form-group">
+            <label for="latitude">Latitud:</label>
+            <input type="number" id="latitude" step="0.0000001" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="longitude">Longitud:</label>
+            <input type="number" id="longitude" step="0.0000001" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="name">Nombre:</label>
+            <input type="text" id="name" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="contact">DNI:</label>
+            <input type="text" id="contact" required>
+        </div>
+
+        <div class="form-group">
+            <label for="poliza">Número de póliza:</label>
+            <input type="text" id="poliza" required>
+        </div>
+        
+        <button type="submit">Registrar Incidente</button>
+    </form>
+    
+    <div id="result"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>

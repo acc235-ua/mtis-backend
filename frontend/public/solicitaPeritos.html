@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Solicitar Perito</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <h1>Solicite un perito </h1>
+  <h3 class="cabecera" >Solicite un perito, si hubiera alguno disponible se lo indicaremos</h3>
+  <form id="peritoForm">
+    <input name="dni" placeholder="DNI del Usuario" required><br>
+    <button type="submit">Solicitar Perito</button>
+  </form>
+  <pre id="respuesta"></pre>
+
+<script>
+  const form = document.getElementById('peritoForm');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(form));
+    const dni = encodeURIComponent(data.dni);
+
+    try {
+      const res = await fetch(`/solicita-perito?dni=${dni}`, {
+        method: 'POST'
+      });
+
+      const respuesta = await res.json();
+      const mensaje = ` ${respuesta.respuesta}.
+ Nombre del perito: ${respuesta.nombrePerito}.
+ Número de caso: ${respuesta.numeroCaso}.`;
+
+      document.getElementById('respuesta').textContent = mensaje;
+    } catch (err) {
+      document.getElementById('respuesta').textContent = 'Error al solicitar perito.';
+    }
+  });
+</script>
+
+</body>
+</html>

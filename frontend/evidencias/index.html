@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adjuntar Evidencias - Sistema de Gestión de Incidentes</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Adjuntar Evidencias</h1>
+        
+        <form id="evidenceForm">
+            <label for="claim_id">ID del Parte de Seguro:</label>
+            <input type="text" id="claim_id" name="claim_id" required>
+            
+            <label for="evidence">Evidencia (descripción detallada):</label>
+            <textarea id="evidence" name="evidence" rows="8" placeholder="Describa la evidencia en detalle..." required></textarea>
+            
+            <button type="submit">Adjuntar Evidencia</button>
+        </form>
+        
+        <div id="result"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
