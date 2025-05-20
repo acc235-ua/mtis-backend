@@ -696,7 +696,7 @@ paths:
         "400":
           description: Datos inválidos
       x-swagger-router-controller: Comprobacion
-  /notificar/:
+  /notificar:
     put:
       tags:
       - Notificar

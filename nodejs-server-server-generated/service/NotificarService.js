@@ -17,8 +17,8 @@ exports.notificarId_usuarioPUT = function(dni_usuario, aprobado) {
       SELECT Correo FROM USUARIO WHERE DNI = ?
       `;
 
-      console.log(dni_usuario);
-      console.log(aprobado);
+      //console.log(dni_usuario);
+      //console.log(aprobado);
       var correo;
       var respuesta;
 
@@ -36,7 +36,7 @@ exports.notificarId_usuarioPUT = function(dni_usuario, aprobado) {
         }
 
           correo = results[0].Correo;
-          console.log(correo);
+          //console.log(correo);
 
           const transporter = nodemailer.createTransport({
         host: 'localhost',
@@ -56,11 +56,11 @@ exports.notificarId_usuarioPUT = function(dni_usuario, aprobado) {
         respuesta = "Su reclamacion ha sido rechazada."
       }
 
-      // Configura el contenido del correo
+      
       const mailOptions = {
         from: 'asegur@dora.es',
         to: correo,
-        subject: correo, // El asunto es la dirección de correo
+        subject: respuesta, 
         text: respuesta
       };
 

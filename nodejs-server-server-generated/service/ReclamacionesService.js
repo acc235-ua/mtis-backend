@@ -17,8 +17,8 @@ exports.reclamacionId_ReclamacionClienteIdGET = function(id_Reclamacion,cliente)
     var idIncidencia;
     var tipoSeguro; //Nombre
 
-    console.log(id_Reclamacion);
-    console.log(cliente);
+    //console.log(id_Reclamacion);
+    //console.log(cliente);
 
     const queryRec = `
       SELECT DNI_Usuario,ID_Incidencia FROM RECLAMACIONES WHERE ID = ?
@@ -46,7 +46,7 @@ exports.reclamacionId_ReclamacionClienteIdGET = function(id_Reclamacion,cliente)
         }
 
         dniUsuario = results[0].DNI_Usuario;
-        console.log(dniUsuario);
+        //console.log(dniUsuario);
 
         if (dniUsuario != cliente){
            return reject({
@@ -54,9 +54,9 @@ exports.reclamacionId_ReclamacionClienteIdGET = function(id_Reclamacion,cliente)
             message: 'El cliente introducido no coincide con el de la reclamación.'
           });
         }
-        console.log(results);
+        //console.log(results);
         idIncidencia =results[0].ID_Incidencia;
-        console.log(idIncidencia);
+        //console.log(idIncidencia);
 
         db.query(queryCli, [cliente], (error, results) => {
         if (error) {
@@ -70,25 +70,25 @@ exports.reclamacionId_ReclamacionClienteIdGET = function(id_Reclamacion,cliente)
             message: 'El usuario no tiene ningún seguro asociado'
           });
         }
-          console.log(results);
+          //console.log(results);
           tipoSeguro = results[0].Tipo_Seguro;
-          console.log(tipoSeguro);
-          console.log(idIncidencia);
+          //console.log(tipoSeguro);
+          //console.log(idIncidencia);
 
           db.query(queryInci, [idIncidencia], (error, results) => {
           if (error) {
             console.error('Error al comprobar los datos de la reclamacion:', error);
             return reject(error);
           }
-            console.log(idIncidencia);
-            console.log(results);
+            //console.log(idIncidencia);
+            //console.log(results);
           if (results.length == 0) {
             return reject({
               status: 404,
               message: 'Error al consultar la incidencia.'
             });
           }
-          console.log(results);
+          //console.log(results);
           if (tipoSeguro == results[0].Seguro_Cubre_Nombre)
           {
             return resolve({

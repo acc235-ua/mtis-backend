@@ -21,8 +21,8 @@ exports.comprobarGET = function(cliente,seguro) {
       SELECT ID FROM SEGURO WHERE ID = ? AND DNI_USUARIO = ?
       `;
 
-      console.log(cliente);
-      console.log(seguro);
+      //console.log(cliente);
+      //console.log(seguro);
       
       db.query(queryCli, [cliente], (error, results) => {
         if (error) {
@@ -43,7 +43,7 @@ exports.comprobarGET = function(cliente,seguro) {
           console.error('Error al comprobar los datos de la reclamacion:', error);
           return reject(error);
         }
-        console.log(results.length);
+        //console.log(results.length);
         
 
         if (results.length == 0) {
@@ -52,7 +52,7 @@ exports.comprobarGET = function(cliente,seguro) {
             message: 'El Seguro no está registrado'
           });
         }else{
-          console.log(results[0].ID);
+          //console.log(results[0].ID);
           return resolve({
           ok: true,
           status: 200
